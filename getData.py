@@ -60,7 +60,7 @@ for _, row in earnings_df.iterrows():
         if len(past_eps) == 4:
             eps_surprise_avg = ((past_eps["Reported EPS"] - past_eps["EPS Estimate"]) / past_eps["EPS Estimate"]).mean()
         else:
-            eps_surprise_avg = 0.05  # fallback value
+            eps_surprise_avg = 0.05
 
         # Technicals
         rsi = RSIIndicator(close, window=14).rsi().iloc[-1]
