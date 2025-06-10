@@ -120,10 +120,10 @@ for _, row in earnings_df.iterrows():
             "volatility_30d": volatility_30d,
             "volume_avg_30d": volume_avg_30d_normalized,
             "spy_return": spy_return,
-            "rel_return_30d": price_return_30d - spy_return,
+            "relative_return_30d": price_return_30d - spy_return,
             'quarter': earnings_date.quarter,
             'day_of_week': earnings_date.weekday(),
-            "label": row["beat"]
+            "beat": row["beat"]
         }
 
         features.append(feature_row)
