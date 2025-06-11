@@ -103,11 +103,13 @@ for _, row in earnings_df.iterrows():
         price_to_avg_30d = close.iloc[-1] / close[-30:].mean()
 
         info = yf.Ticker(ticker).info
+        sector = info.get("sector", np.nan)
         beta = info.get("beta", np.nan)
 
         feature_row = {
             "ticker": ticker,
             "earnings_date": earnings_date.date(),
+            "sector": sector,
             'beta': beta,
             "eps_estimate": row["EPS Estimate"],
             "price_to_avg_30d": price_to_avg_30d,
