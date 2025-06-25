@@ -20,8 +20,12 @@ company_name = info.get("shortName", ticker)
 website = info.get("website", None)
 description = info.get("longBusinessSummary", "")
 prefix = company_name.rstrip(".")
-parts = re.split(r'(?<!Inc)(?<!LLC)(?<!Co)(?<!Corp)\. ', description, maxsplit=1)
-short_desc = parts[0].strip() + "."
+sentences = re.split(r'(?<!Inc)(?<!LLC)(?<!Co)(?<!Corp)\. ', description)
+first_sentences = sentences[:4] # Adjust the number for the number of sentences
+short_desc = ". ".join(sentence.strip() for sentence in first_sentences)
+if not short_desc.endswith("."):
+    short_desc += "."
+
 sector = info.get("sector", "N/A")
 beta = info.get("beta", np.nan)
 
