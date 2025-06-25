@@ -8,7 +8,7 @@ from catboost import CatBoostClassifier, Pool
 import re
 
 # Choose stock and load model
-ticker = "EQT"
+ticker = "TSLA"
 category_features = ["sector", "quarter", "day_of_week"]
 model = CatBoostClassifier()
 model.load_model("catboost_model.cbm")
