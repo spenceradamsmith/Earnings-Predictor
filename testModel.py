@@ -8,7 +8,7 @@ from catboost import CatBoostClassifier, Pool
 import re
 
 # Choose stock and load model
-ticker = "TSLA"
+ticker = "NKE"
 category_features = ["sector", "quarter", "day_of_week"]
 model = CatBoostClassifier()
 model.load_model("catboost_model.cbm")
@@ -158,13 +158,23 @@ try:
     input_df = pd.DataFrame([feature_row])
 
     # Predict beat percentage for ticker
-    test_pool = Pool(data=input_df, cat_features = category_features)
-    probability = model.predict_proba(test_pool)[:, 1][0]
-    probability_pct = probability * 100
+    test_pool = Pool(data = input_df, cat_features = category_features)
+    test_probability = model.predict_proba(test_pool)[:, 1][0]
+    test_probability_pct = test_probability * 100
+    # Rescale so old 0.57 = new 0.50
+    def rescale(probability, threshold = 0.57):
+        if probability >= threshold:
+          return 0.5 + (probability - threshold) / (1 - threshold) * 0.5
+        else:
+            return (probability / threshold) * 0.5
+
+    scaled_probability = rescale(test_probability)
+    scaled_probability_pct = scaled_probability * 100
     date_str = next_earnings_date.strftime("%m-%d-%Y")
     print(f"Earnings Date: {date_str}")
     print(f"Expected EPS: {eps_estimate:.2f}")
-    print(f"Probability of Beat: {probability_pct:.2f}%")
+    print(f"Test Probability of Beat: {test_probability_pct:.2f}%")
+    print(f"Scaled Probability of Beat: {scaled_probability_pct:.2f}%")
     
 except Exception as e:
     print(f"Error generating prediction for {ticker}: {e}")
