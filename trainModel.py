@@ -38,6 +38,9 @@ train_pool = Pool(data = X_train, label = y_train, cat_features = category_featu
 test_pool  = Pool(data = X_test,  label = y_test,  cat_features = category_features)
 model.fit(train_pool, eval_set = test_pool)
 
+# Save the model after training
+model.save_model("catboost_model.cbm")
+
 # Predict on the test set
 best_threshold = 0.57
 probabilities = model.predict_proba(X_test)[:, 1]
