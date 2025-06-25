@@ -5,8 +5,6 @@ from datetime import timedelta
 from ta.momentum import RSIIndicator
 from ta.trend import MACD, SMAIndicator
 from catboost import CatBoostClassifier, Pool
-import requests
-from bs4 import BeautifulSoup
 import re
 
 # Choose stock and load model
