@@ -8,8 +8,10 @@ from ta.momentum import RSIIndicator
 from ta.trend import MACD, SMAIndicator
 from catboost import CatBoostClassifier, Pool
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/predict")
 def predict():
