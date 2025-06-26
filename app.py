@@ -76,8 +76,8 @@ def predict():
         spy_data = spy_data[spy_data.index <= cutoff_date]
 
         # Compute features
-        close = price_data["Close"]
-        volume = price_data["Volume"]
+        close = price_data["Close"].squeeze()
+        volume = price_data["Volume"].squeeze()
 
         rsi = RSIIndicator(close, window=14).rsi().iloc[-1]
         macd_diff = MACD(close).macd_diff().iloc[-1]
