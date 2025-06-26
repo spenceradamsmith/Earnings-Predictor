@@ -1,0 +1,143 @@
+/* Smooth scroll and hide horizontal overflow */
+html {
+  scroll-behavior: smooth;
+}
+html, body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* Fixed top bar with title, search, and categories */
+.top-bar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #fff;
+  border-bottom: 1px solid #000;
+  z-index: 1000;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(10px, 2vw, 20px) clamp(30px, 5vw, 50px) clamp(5px, 1vw, 10px) clamp(20px, 4vw, 40px);
+  box-sizing: border-box;
+}
+
+.header-top h1 {
+  margin: 0;
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 700;
+  color: black;
+}
+
+.search-box {
+  position: relative;
+  width: clamp(200px, 40%, 60vw);
+  max-width: 500px;
+  box-sizing: border-box;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 8px 12px 8px clamp(32px, 5vw, 40px);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: clamp(12px, 2.5vw, 16px);
+  box-sizing: border-box;
+}
+
+.search-box img.search-icon {
+  position: absolute;
+  top: 50%;
+  left: clamp(8px, 2vw, 10px);
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.categories-nav {
+  display: flex;
+  overflow-x: auto;
+  padding: 0 20px;
+  gap: 0;
+  box-sizing: border-box;
+}
+
+.categories-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.categories-nav button {
+  flex: 0 0 auto;
+  background: none;
+  border: none;
+  padding: clamp(6px, 1.5vw, 12px) clamp(8px, 2vw, 16px);
+  font-size: clamp(12px, 2.5vw, 18px);
+  cursor: pointer;
+  white-space: nowrap;
+  color: #333;
+}
+
+.categories-nav button.selected {
+  color: #007bff;
+}
+
+/* Main content area shifts below fixed top-bar */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: calc(clamp(10px, 2vw, 20px) + clamp(36px, 4vw, 48px) + clamp(30px, 4vw, 40px) + 20px);
+  box-sizing: border-box;
+}
+
+/* Responsive cards grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  margin: 0;
+  list-style: none;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  /* 16:9 aspect ratio via padding trick */
+  height: 0;
+  padding-top: 56.25%;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, background-color 0.2s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.card-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* One card per row on small screens */
+@media (max-width: 600px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
