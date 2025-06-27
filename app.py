@@ -48,8 +48,10 @@ def predict():
             raw = cal.loc["Earnings Date"][0]
         else:
             raw = cal.get("Earnings Date") or cal.get("earningsDate")
-            if isinstance(raw, list): raw = raw[0]
-            elif isinstance(raw, dict): raw = list(raw.values())[0]
+            if isinstance(raw, list):
+                raw = raw[0]
+            elif isinstance(raw, dict):
+                raw = list(raw.values())[0]
         next_dt = pd.to_datetime(raw).tz_localize(None).normalize()
     except Exception as e:
         return jsonify({
@@ -65,14 +67,8 @@ def predict():
     earnings_date_str = next_dt.strftime("%Y-%m-%d")
     days_until = (next_dt - today).days
 
-    # EPS estimate
-    eps_est = float(info.get("forwardEps", 0.0) or 0.0)
-
-    # If earnings are more than a week away, return fields + message
+    # If earnings are more than a week away, just return days_until as an integer
     if days_until > 7:
-        wait = days_until - 7
-        next_str = next_dt.strftime("%m-%d-%Y")
-        check_str = (today + timedelta(days=wait)).strftime("%m-%d-%Y")
         return jsonify({
             "company_name": company_name,
             "ticker": ticker,
@@ -81,11 +77,8 @@ def predict():
             "website": website,
             "logo": logo,
             "earnings_date": earnings_date_str,
-            "expected_eps": round(eps_est, 2),
-            "message": (
-                f"{ticker}'s next earnings ({next_str}) are in {days_until} days. "
-                f"Check back in {wait} day(s), on {check_str} for a prediction."
-            )
+            "expected_eps": round(float(info.get("forwardEps", 0.0) or 0.0), 2),
+            "days_until": days_until
         }), 200
 
     # Otherwise compute features and predict
@@ -132,7 +125,7 @@ def predict():
     feature_row = {
         "sector": info.get("sector", np.nan),
         "beta": beta,
-        "eps_estimate": eps_est,
+        "eps_estimate": float(info.get("forwardEps", 0.0) or 0.0),
         "price_to_avg_30d": price_to_avg30d,
         "eps_surprise_avg": eps_surprise_avg,
         "price_return_30d": price_ret_30d,
@@ -151,21 +144,27 @@ def predict():
     pool = Pool(data=df, cat_features=["sector", "quarter", "day_of_week"])
     prob = model.predict_proba(pool)[:, 1][0]
     raw_pct = prob * 100
-    def rescale(p, thresh=0.57): return (0.5 + (p-thresh)/(1-thresh)*0.5) if p>=thresh else (p/thresh)*0.5
+
+    def rescale(p, thresh=0.57):
+        if p >= thresh:
+            return 0.5 + (p - thresh) / (1 - thresh) * 0.5
+        else:
+            return (p / thresh) * 0.5
+
     scaled_pct = rescale(prob) * 100
 
     # Normal response with predictions
     return jsonify({
-        "company_name":      company_name,
-        "ticker":            ticker,
+        "company_name": company_name,
+        "ticker": ticker,
         "short_description": short_desc,
-        "beta":              None if np.isnan(beta) else round(beta, 2),
-        "website":           website,
-        "logo":              logo,
-        "earnings_date":     earnings_date_str,
-        "expected_eps":      round(eps_est, 2),
-        "raw_beat_pct":      round(raw_pct, 2),
-        "scaled_beat_pct":   round(scaled_pct, 2),
+        "beta": None if np.isnan(beta) else round(beta, 2),
+        "website": website,
+        "logo": logo,
+        "earnings_date": earnings_date_str,
+        "expected_eps": round(float(info.get("forwardEps", 0.0) or 0.0), 2),
+        "raw_beat_pct": round(raw_pct, 2),
+        "scaled_beat_pct": round(scaled_pct, 2),
     }), 200
 
 if __name__ == "__main__":
