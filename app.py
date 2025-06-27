@@ -185,9 +185,9 @@ def predict():
         # SPY return
         spy_close = spy_data["Close"]
         if len(spy_close) >= 30:
-            spy_return = spy_close.iloc[-1] / spy_close.iloc[-30] - 1
+            spy_return = float(spy_close.iloc[-1] / spy_close.iloc[-30] - 1)
         else:
-            spy_return = np.nan
+            spy_return = 0.0
 
         price_to_avg30d = close.iloc[-1] / close.iloc[-30:].mean() if len(close) >= 30 else np.nan
 
@@ -202,7 +202,7 @@ def predict():
             eps_surprise_avg = eps_surprises.mean()
         else:
             eps_surprise_avg = np.nan
-
+        
         # Build feature row
         feature_row = {
             "sector": info.get("sector", np.nan),
@@ -218,7 +218,7 @@ def predict():
             "volatility_30d": volatility_30d,
             "volume_avg_30d": vol_norm,
             "spy_return": spy_return,
-            "relative_return_30d": price_ret_30d - (spy_return or 0),
+            "relative_return_30d": price_ret_30d - spy_return,
             "quarter": next_dt.quarter,
             "day_of_week": next_dt.weekday(),
         }
