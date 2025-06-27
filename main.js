@@ -1,4 +1,8 @@
-// Define your ticker lists (keys must match the button text exactly)
+const customLogos = window.customLogos || {};
+
+function getLogoSrc(ticker, fallbackLogo) {
+  return customLogos[ticker] || fallbackLogo;
+}
 
 const top20Tickers = [
   'AAPL','MSFT','GOOGL','AMZN','TSLA',
@@ -144,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         card.classList.add('card', 'mode-prediction');
         const pct = item.raw_beat_pct;
         // compute gauge arc
-        const angle = item.raw_beat_pct * Math.PI;              // 0 → π
+        const angle = item.raw_beat_pct * Math.PI;
         const cx = 50, cy = 50, r = 40;
         const x = cx + r * Math.cos(Math.PI - angle);
         const y = cy - r * Math.sin(Math.PI - angle);
@@ -154,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         card.innerHTML = `
           <div class="card-content">
             <div class="logo">
-              <img src="${item.logo}" alt="${item.name} logo" />
+              <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
             </div>
             <div class="header">
               <h2 class="company">${item.name}</h2>
@@ -187,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         card.innerHTML = `
           <div class="card-content">
             <div class="logo">
-              <img src="${item.logo}" alt="${item.name} logo" />
+              <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
             </div>
             <div class="header">
               <h2 class="company">${item.name}</h2>

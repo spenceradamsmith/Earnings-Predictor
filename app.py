@@ -118,8 +118,6 @@ def predict():
             "message": f"No upcoming earnings found for {ticker}: {e}"
         }), 200
 
-
-
     earnings_date_str = next_dt.strftime("%Y-%m-%d")
     days_until = (next_dt - today).days
 
