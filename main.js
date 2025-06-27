@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </div>
             <div class="visual countdown">
-              <div class="count">${item.days_until}</div>
+              <div class="count">${item.days_until - 7}</div>
               <div class="unit">days until release</div>
             </div>
           </div>
