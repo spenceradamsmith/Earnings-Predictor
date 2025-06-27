@@ -47,7 +47,7 @@ html, body {
   width: 100%;
   padding: 8px 12px 8px clamp(32px, 5vw, 40px);
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 10px;
   font-size: clamp(12px, 2.5vw, 16px);
   box-sizing: border-box;
 }
@@ -157,7 +157,7 @@ main {
   flex-direction: column;
   background: #1f2a3a;
   color: #fff;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 12px 16px;
 }
 .visual.countdown .count {
@@ -194,6 +194,16 @@ main {
 /* Keep extra breathing room below ticker */
 .card .details {
   margin-top: clamp(12px, 3vw, 20px);
+}
+
+.card-content .logo img {
+  width: 55px;   /* Adjust this to desired size */
+  height: 55px;  /* Maintain equal width and height for consistency */
+  object-fit: contain; /* Ensures logo maintains aspect ratio */
+  box-sizing: border-box;
+  padding: 5px;
+  border-radius: 10px;
+  background-color: white;
 }
 
 /* One card per row on small screens */
