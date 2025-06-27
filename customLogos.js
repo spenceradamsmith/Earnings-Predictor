@@ -21,7 +21,7 @@ window.customLogos = {
   KO: 'https://companieslogo.com/img/orig/KO-b23a2a5e.png?t=1720244492',
   PFE: 'https://companieslogo.com/img/orig/PFE-749aeae5.png?t=1720244493',
 
-  // Technology (new)
+  // Technology
   ORCL: 'https://companieslogo.com/img/orig/ORCL-d5a587ae.png?t=1740130451',
   IBM: 'https://www.gesi.org/wp-content/uploads/2024/08/purepng.com-ibm-logologobrand-logoiconslogos-251519939176ka7y8.png',
   INTC: 'https://companieslogo.com/img/orig/INTC-12074943.png?t=1720244492',
@@ -38,7 +38,7 @@ window.customLogos = {
   SNPS: 'https://cdn.brandfetch.io/idKFOnLK1I/w/360/h/360/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1744268485369',
   TEAM: 'https://companieslogo.com/img/orig/TEAM-ddb0dd07.png?t=1720244494',
 
-  // Healthcare (new)
+  // Healthcare
   MRK: 'https://companieslogo.com/img/orig/MRK-7f8ec2c5.png?t=1722952496',
   ABBV: 'https://companieslogo.com/img/orig/ABBV-43b0eee3.png?t=1720244490',
   LLY: 'https://companieslogo.com/img/orig/LLY-a89a5a37.png?t=1722952494',
@@ -57,7 +57,7 @@ window.customLogos = {
   BSX: 'https://companieslogo.com/img/orig/BSX-a656495a.png?t=1720244491',
   ILMN: 'https://companieslogo.com/img/orig/ILMN-e6ffdb68.png?t=1728709562',
 
-  // Financials (new)
+  // Financials
   BAC: 'https://companieslogo.com/img/orig/BAC-e7995069.png?t=1720244490',
   WFC: 'https://companieslogo.com/img/orig/WFC-a4743c33.png?t=1740744738',
   C: 'https://companieslogo.com/img/orig/C-9c2e2afb.png?t=1720244491',
@@ -77,7 +77,7 @@ window.customLogos = {
   ALL: 'https://i.pinimg.com/736x/f1/f5/a3/f1f5a355f169c6d59de205c335bef394.jpg',
   CME: 'https://companieslogo.com/img/orig/CME-ce2f32ad.png?t=1720244491',
 
-  // Consumer Discretionary (new)
+  // Consumer Discretionary
   MCD: '',
   NKE: '',
   SBUX: '',
@@ -96,7 +96,7 @@ window.customLogos = {
   F: '',
   LEG: '',
 
-  // Consumer Staples (new)
+  // Consumer Staples
   PEP: '',
   WMT: '',
   COST: '',
@@ -115,7 +115,7 @@ window.customLogos = {
   SYY: '',
   MNST: '',
 
-  // Energy (new)
+  // Energy
   CVX: '',
   COP: '',
   SLB: '',
@@ -136,7 +136,7 @@ window.customLogos = {
   OKE: '',
   ENB: '',
 
-  // Industrials (new)
+  // Industrials
   BA: '',
   HON: '',
   UPS: '',
@@ -158,7 +158,7 @@ window.customLogos = {
   TXT: '',
   DOV: '',
 
-  // Materials (new)
+  // Materials
   LIN: '',
   APD: '',
   ECL: '',
@@ -180,7 +180,7 @@ window.customLogos = {
   MLM: '',
   CF: '',
 
-  // Utilities (new)
+  // Utilities
   NEE: '',
   DUK: '',
   SO: '',
@@ -202,7 +202,7 @@ window.customLogos = {
   ATO: '',
   OGE: '',
 
-  // Real Estate (new)
+  // Real Estate
   AMT: '',
   PLD: '',
   SPG: '',
@@ -224,7 +224,7 @@ window.customLogos = {
   REG: '',
   SLG: '',
 
-  // Communication Services (new)
+  // Communication Services
   NFLX: '',
   CMCSA: '',
   T: '',
