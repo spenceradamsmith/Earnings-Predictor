@@ -5,3 +5,4 @@ numpy
 ta
 catboost
 gunicorn
+flast_cors
