@@ -54,14 +54,19 @@ def predict():
                 raw = list(raw.values())[0]
         next_dt = pd.to_datetime(raw).tz_localize(None).normalize()
     except Exception as e:
+        # beta rounding
+        if np.isnan(beta):
+            beta_out = None
+        else:
+            beta_out = round(beta, 2)
         return jsonify({
             "company_name":      company_name,
             "ticker":            ticker,
             "short_description": short_desc,
-            "beta":              None if np.isnan(beta) else round(beta, 2),
+            "beta":              beta_out,
             "website":           website,
             "logo":              logo,
-            "message":          f"No upcoming earnings found for {ticker}: {e}"
+            "message":           f"No upcoming earnings found for {ticker}: {e}"
         }), 200
 
     earnings_date_str = next_dt.strftime("%Y-%m-%d")
@@ -70,24 +75,32 @@ def predict():
     # EPS estimate
     eps_est = float(info.get("forwardEps", 0.0) or 0.0)
 
+    # Prepare rounded beta once
+    if np.isnan(beta):
+        beta_out = None
+    else:
+        beta_out = round(beta, 2)
+
     # If earnings are more than a week away, tell user when to check back
     if days_until_release > 7:
         wait = days_until_release - 7
-        next_str  = next_dt.strftime("%m-%d-%Y")
-        check_str = (today + timedelta(days=wait)).strftime("%m-%d-%Y")
+        next_str = next_dt.strftime("%m-%d-%Y")
+        check_date = today + timedelta(days=wait)
+        check_str = check_date.strftime("%m-%d-%Y")
         return jsonify({
             "company_name":       company_name,
             "ticker":             ticker,
             "short_description":  short_desc,
-            "beta":               None if np.isnan(beta) else round(beta, 2),
+            "beta":               beta_out,
             "website":            website,
             "logo":               logo,
             "earnings_date":      earnings_date_str,
             "days_until_release": days_until_release,
             "expected_eps":       round(eps_est, 2),
             "message": (
-                f"{ticker}'s next earnings ({next_str}) are in {days_until_release} days. "
-                f"Check back in {wait} day(s), on {check_str} for a prediction."
+                f"{ticker}'s next earnings ({next_str}) are in "
+                f"{days_until_release} days. Check back in {wait} day(s), "
+                f"on {check_str} for a prediction."
             )
         }), 200
 
@@ -108,7 +121,7 @@ def predict():
         progress=False
     )
 
-    # --- make indices tz‐naive so we can compare to cutoff safely ---
+    # make indices tz‐naive for safe comparison
     try:
         price_data.index = price_data.index.tz_localize(None)
     except Exception:
@@ -117,12 +130,11 @@ def predict():
         spy_data.index = spy_data.index.tz_localize(None)
     except Exception:
         pass
-    # ----------------------------------------------------------------
 
     price_data = price_data[price_data.index <= cutoff]
-    spy_data   = spy_data[spy_data.index   <= cutoff]
+    spy_data = spy_data[spy_data.index <= cutoff]
 
-    close  = price_data["Close"]
+    close = price_data["Close"]
     volume = price_data["Volume"]
     # ensure 1D
     if getattr(close, "ndim", 1) != 1:
@@ -130,24 +142,45 @@ def predict():
     if getattr(volume, "ndim", 1) != 1:
         volume = pd.Series(volume.values.squeeze(), index=price_data.index)
 
-    # technicals
-    rsi       = RSIIndicator(close, window=14).rsi().iloc[-1]
+    # technical indicators
+    rsi = RSIIndicator(close, window=14).rsi().iloc[-1]
     macd_diff = MACD(close).macd_diff().iloc[-1]
-    sma20     = SMAIndicator(close, 20).sma_indicator().iloc[-1]
-    sma50     = SMAIndicator(close, 50).sma_indicator().iloc[-1]
-    sma_ratio = sma20 / sma50 if sma50 != 0 else np.nan
+    sma20 = SMAIndicator(close, 20).sma_indicator().iloc[-1]
+    sma50 = SMAIndicator(close, 50).sma_indicator().iloc[-1]
+
+    # expand sma_ratio if/else
+    if sma50 != 0:
+        sma_ratio = sma20 / sma50
+    else:
+        sma_ratio = np.nan
 
     # returns & volatility
     price_ret_30d = close.iloc[-1] / close.iloc[-30] - 1
-    price_ret_7d  = close.iloc[-7]  / close.iloc[-14] - 1 if len(close) >= 14 else np.nan
+
+    # expand price_ret_7d if/else
+    if len(close) >= 14:
+        price_ret_7d = close.iloc[-7] / close.iloc[-14] - 1
+    else:
+        price_ret_7d = np.nan
+
     volatility_30d = close[-30:].pct_change().std()
     vol_avg = volume[-30:].mean()
     vol_max = volume[-30:].max()
-    vol_norm = vol_avg / vol_max if vol_max != 0 else np.nan
+
+    # expand vol_norm if/else
+    if vol_max != 0:
+        vol_norm = vol_avg / vol_max
+    else:
+        vol_norm = np.nan
 
     # market benchmark
-    spy_close  = spy_data["Close"]
-    spy_return = spy_close.iloc[-1] / spy_close.iloc[-30] - 1 if len(spy_close) >= 30 else np.nan
+    spy_close = spy_data["Close"]
+    # expand spy_return if/else
+    if len(spy_close) >= 30:
+        spy_return = spy_close.iloc[-1] / spy_close.iloc[-30] - 1
+    else:
+        spy_return = np.nan
+
     price_to_avg30d = close.iloc[-1] / close.iloc[-30:].mean()
 
     # earnings history → EPS surprises
@@ -155,37 +188,43 @@ def predict():
     history.index = pd.to_datetime(history.index).tz_localize(None)
     past = history[history.index < next_dt].sort_index(ascending=False).head(4)
     if len(past) >= 1:
-        eps_surprises    = (past["Reported EPS"] - past["EPS Estimate"]) / past["EPS Estimate"]
+        eps_surprises = (past["Reported EPS"] - past["EPS Estimate"]) / past["EPS Estimate"]
         eps_surprise_avg = eps_surprises.mean()
     else:
         eps_surprise_avg = np.nan
 
     # assemble feature row
     feature_row = {
-        "sector":                 info.get("sector", np.nan),
-        "beta":                   beta,
-        "eps_estimate":           eps_est,
-        "price_to_avg_30d":       price_to_avg30d,
-        "eps_surprise_avg":       eps_surprise_avg,
-        "price_return_30d":       price_ret_30d,
+        "sector": info.get("sector", np.nan),
+        "beta": beta,
+        "eps_estimate": eps_est,
+        "price_to_avg_30d": price_to_avg30d,
+        "eps_surprise_avg": eps_surprise_avg,
+        "price_return_30d": price_ret_30d,
         "price_return_7d_before_cutoff": price_ret_7d,
-        "rsi_14":                 rsi,
-        "macd_diff":              macd_diff,
-        "sma_ratio_20_50":        sma_ratio,
-        "volatility_30d":         volatility_30d,
-        "volume_avg_30d":         vol_norm,
-        "spy_return":             spy_return,
-        "relative_return_30d":    price_ret_30d - (spy_return or 0),
-        "quarter":                next_dt.quarter,
-        "day_of_week":            next_dt.weekday(),
+        "rsi_14": rsi,
+        "macd_diff": macd_diff,
+        "sma_ratio_20_50": sma_ratio,
+        "volatility_30d": volatility_30d,
+        "volume_avg_30d": vol_norm,
+        "spy_return": spy_return,
+        "relative_return_30d": price_ret_30d - (spy_return or 0),
+        "quarter": next_dt.quarter,
+        "day_of_week": next_dt.weekday(),
     }
     df = pd.DataFrame([feature_row])
     pool = Pool(data=df, cat_features=["sector", "quarter", "day_of_week"])
 
     prob = model.predict_proba(pool)[:, 1][0]
-    raw_pct    = prob * 100
+    raw_pct = prob * 100
+
+    # expand rescale function
     def rescale(p, thresh=0.57):
-        return 0.5 + (p - thresh)/(1 - thresh)*0.5 if p >= thresh else (p / thresh)*0.5
+        if p >= thresh:
+            return 0.5 + (p - thresh) / (1 - thresh) * 0.5
+        else:
+            return (p / thresh) * 0.5
+
     scaled_pct = rescale(prob) * 100
 
     # final response
@@ -193,7 +232,7 @@ def predict():
         "company_name":       company_name,
         "ticker":             ticker,
         "short_description":  short_desc,
-        "beta":               None if np.isnan(beta) else round(beta, 2),
+        "beta":               beta_out,
         "website":            website,
         "logo":               logo,
         "earnings_date":      earnings_date_str,
