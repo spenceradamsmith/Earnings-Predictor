@@ -48,142 +48,72 @@ def predict():
             raw = cal.loc["Earnings Date"][0]
         else:
             raw = cal.get("Earnings Date") or cal.get("earningsDate")
-            if isinstance(raw, list):
-                raw = raw[0]
-            elif isinstance(raw, dict):
-                raw = list(raw.values())[0]
+            if isinstance(raw, list): raw = raw[0]
+            elif isinstance(raw, dict): raw = list(raw.values())[0]
         next_dt = pd.to_datetime(raw).tz_localize(None).normalize()
     except Exception as e:
-        # beta rounding
-        if np.isnan(beta):
-            beta_out = None
-        else:
-            beta_out = round(beta, 2)
         return jsonify({
-            "company_name":      company_name,
-            "ticker":            ticker,
+            "company_name": company_name,
+            "ticker": ticker,
             "short_description": short_desc,
-            "beta":              beta_out,
-            "website":           website,
-            "logo":              logo,
-            "message":           f"No upcoming earnings found for {ticker}: {e}"
+            "beta": None if np.isnan(beta) else round(beta, 2),
+            "website": website,
+            "logo": logo,
+            "message": f"No upcoming earnings found for {ticker}: {e}"
         }), 200
 
     earnings_date_str = next_dt.strftime("%Y-%m-%d")
-    days_until_release = (next_dt - today).days
+    days_until = (next_dt - today).days
 
     # EPS estimate
     eps_est = float(info.get("forwardEps", 0.0) or 0.0)
 
-    # Prepare rounded beta once
-    if np.isnan(beta):
-        beta_out = None
-    else:
-        beta_out = round(beta, 2)
-
-    # If earnings are more than a week away, tell user when to check back
-    if days_until_release > 7:
-        wait = days_until_release - 7
-        next_str = next_dt.strftime("%m-%d-%Y")
-        check_date = today + timedelta(days=wait)
-        check_str = check_date.strftime("%m-%d-%Y")
+    # If earnings are more than a week away, return fields + message
+    if days_until > 7:
         return jsonify({
-            "company_name":       company_name,
-            "ticker":             ticker,
-            "short_description":  short_desc,
-            "beta":               beta_out,
-            "website":            website,
-            "logo":               logo,
-            "earnings_date":      earnings_date_str,
-            "days_until_release": days_until_release,
-            "expected_eps":       round(eps_est, 2),
-            "message": (
-                f"{ticker}'s next earnings ({next_str}) are in "
-                f"{days_until_release} days. Check back in {wait} day(s), "
-                f"on {check_str} for a prediction."
-            )
+            "company_name": company_name,
+            "ticker": ticker,
+            "short_description": short_desc,
+            "beta": None if np.isnan(beta) else round(beta, 2),
+            "website": website,
+            "logo": logo,
+            "earnings_date": earnings_date_str,
+            "expected_eps": round(eps_est, 2),
+            "days_until": days_until,
         }), 200
 
     # Otherwise compute features and predict
     cutoff = next_dt - timedelta(days=7)
-    price_data = yf.download(
-        ticker,
-        start="2013-01-01",
-        end=cutoff + timedelta(days=1),
-        auto_adjust=True,
-        progress=False
-    )
-    spy_data = yf.download(
-        "SPY",
-        start="2013-01-01",
-        end=cutoff + timedelta(days=1),
-        auto_adjust=True,
-        progress=False
-    )
-
-    # make indices tz‐naive for safe comparison
-    try:
-        price_data.index = price_data.index.tz_localize(None)
-    except Exception:
-        pass
-    try:
-        spy_data.index = spy_data.index.tz_localize(None)
-    except Exception:
-        pass
-
+    price_data = yf.download(ticker, start="2013-01-01", end=cutoff + timedelta(days=1), auto_adjust=True, progress=False)
+    spy_data = yf.download("SPY", start="2013-01-01", end=cutoff + timedelta(days=1), auto_adjust=True, progress=False)
     price_data = price_data[price_data.index <= cutoff]
     spy_data = spy_data[spy_data.index <= cutoff]
 
+    # Ensure 1D series
     close = price_data["Close"]
     volume = price_data["Volume"]
-    # ensure 1D
     if getattr(close, "ndim", 1) != 1:
         close = pd.Series(close.values.squeeze(), index=price_data.index)
     if getattr(volume, "ndim", 1) != 1:
         volume = pd.Series(volume.values.squeeze(), index=price_data.index)
 
-    # technical indicators
     rsi = RSIIndicator(close, window=14).rsi().iloc[-1]
     macd_diff = MACD(close).macd_diff().iloc[-1]
     sma20 = SMAIndicator(close, 20).sma_indicator().iloc[-1]
     sma50 = SMAIndicator(close, 50).sma_indicator().iloc[-1]
+    sma_ratio = sma20 / sma50 if sma50 != 0 else np.nan
 
-    # expand sma_ratio if/else
-    if sma50 != 0:
-        sma_ratio = sma20 / sma50
-    else:
-        sma_ratio = np.nan
-
-    # returns & volatility
     price_ret_30d = close.iloc[-1] / close.iloc[-30] - 1
-
-    # expand price_ret_7d if/else
-    if len(close) >= 14:
-        price_ret_7d = close.iloc[-7] / close.iloc[-14] - 1
-    else:
-        price_ret_7d = np.nan
-
+    price_ret_7d = close.iloc[-7] / close.iloc[-14] - 1 if len(close) >= 14 else np.nan
     volatility_30d = close[-30:].pct_change().std()
     vol_avg = volume[-30:].mean()
     vol_max = volume[-30:].max()
+    vol_norm = vol_avg / vol_max if vol_max != 0 else np.nan
 
-    # expand vol_norm if/else
-    if vol_max != 0:
-        vol_norm = vol_avg / vol_max
-    else:
-        vol_norm = np.nan
-
-    # market benchmark
     spy_close = spy_data["Close"]
-    # expand spy_return if/else
-    if len(spy_close) >= 30:
-        spy_return = spy_close.iloc[-1] / spy_close.iloc[-30] - 1
-    else:
-        spy_return = np.nan
-
+    spy_return = spy_close.iloc[-1] / spy_close.iloc[-30] - 1 if len(spy_close) >= 30 else np.nan
     price_to_avg30d = close.iloc[-1] / close.iloc[-30:].mean()
 
-    # earnings history → EPS surprises
     history = stock.get_earnings_dates(limit=40)
     history.index = pd.to_datetime(history.index).tz_localize(None)
     past = history[history.index < next_dt].sort_index(ascending=False).head(4)
@@ -193,7 +123,6 @@ def predict():
     else:
         eps_surprise_avg = np.nan
 
-    # assemble feature row
     feature_row = {
         "sector": info.get("sector", np.nan),
         "beta": beta,
@@ -214,32 +143,24 @@ def predict():
     }
     df = pd.DataFrame([feature_row])
     pool = Pool(data=df, cat_features=["sector", "quarter", "day_of_week"])
-
     prob = model.predict_proba(pool)[:, 1][0]
     raw_pct = prob * 100
-
-    # expand rescale function
-    def rescale(p, thresh=0.57):
-        if p >= thresh:
-            return 0.5 + (p - thresh) / (1 - thresh) * 0.5
-        else:
-            return (p / thresh) * 0.5
-
+    def rescale(p, thresh=0.57): return (0.5 + (p-thresh)/(1-thresh)*0.5) if p>=thresh else (p/thresh)*0.5
     scaled_pct = rescale(prob) * 100
 
-    # final response
+    # Normal response with predictions
     return jsonify({
-        "company_name":       company_name,
-        "ticker":             ticker,
-        "short_description":  short_desc,
-        "beta":               beta_out,
-        "website":            website,
-        "logo":               logo,
-        "earnings_date":      earnings_date_str,
-        "days_until_release": days_until_release,
-        "expected_eps":       round(eps_est, 2),
-        "raw_beat_pct":       round(raw_pct, 2),
-        "scaled_beat_pct":    round(scaled_pct, 2),
+        "company_name":      company_name,
+        "ticker":            ticker,
+        "short_description": short_desc,
+        "beta":              None if np.isnan(beta) else round(beta, 2),
+        "website":           website,
+        "logo":              logo,
+        "earnings_date":     earnings_date_str,
+        "expected_eps":      round(eps_est, 2),
+        "raw_beat_pct":      round(raw_pct, 2),
+        "scaled_beat_pct":   round(scaled_pct, 2),
+        "days_until": days_until,
     }), 200
 
 if __name__ == "__main__":
