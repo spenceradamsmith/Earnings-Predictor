@@ -69,32 +69,46 @@ def predict():
     else:
         beta_value = round(beta_raw, 2)
 
-    # Determine next earnings date
+        # Determine next earnings date
     today = pd.Timestamp.now().normalize()
     try:
         cal = stock.calendar
-        # DataFrame vs dict handling
+
+        # 1) Normalize into a list of pd.Timestamp
+        raw = None
         if isinstance(cal, pd.DataFrame):
-            raw_date = cal.loc["Earnings Date"][0]
+            raw = cal.loc["Earnings Date"].values
         else:
-            if "Earnings Date" in cal:
-                raw = cal.get("Earnings Date")
-            else:
-                raw = cal.get("earningsDate")
-            if isinstance(raw, list):
-                raw_date = raw[0]
-            elif isinstance(raw, dict):
-                raw_date = list(raw.values())[0]
-            else:
-                raw_date = raw
-        next_dt = pd.to_datetime(raw_date)
-        # Remove timezone
-        if next_dt.tzinfo is not None:
-            next_dt = next_dt.tz_convert(None)
-        next_dt = next_dt.normalize()
+            raw = cal.get("Earnings Date") or cal.get("earningsDate")
+
+        # Wrap single values/lists/dicts into a flat list
+        if isinstance(raw, dict):
+            raw_vals = list(raw.values())
+        elif not isinstance(raw, (list, np.ndarray)):
+            raw_vals = [raw]
+        else:
+            raw_vals = list(raw)
+
+        # Parse into Timestamps
+        all_dates = []
+        for d in raw_vals:
+            try:
+                ts = pd.to_datetime(d).tz_convert(None).normalize() if hasattr(d, "tzinfo") else pd.to_datetime(d).normalize()
+                all_dates.append(ts)
+            except Exception:
+                continue
+
+        # 2) Keep only today-or-later
+        future_dates = [d for d in all_dates if d >= today]
+
+        if not future_dates:
+            raise ValueError("no upcoming earnings dates")
+
+        # 3) Pick the soonest
+        next_dt = min(future_dates)
+
     except Exception as e:
-        # No upcoming earnings
-        response = {
+        return jsonify({
             "company_name": company_name,
             "ticker": ticker,
             "short_description": short_desc,
@@ -102,8 +116,9 @@ def predict():
             "website": website,
             "logo": logo,
             "message": f"No upcoming earnings found for {ticker}: {e}"
-        }
-        return jsonify(response), 200
+        }), 200
+
+
 
     earnings_date_str = next_dt.strftime("%Y-%m-%d")
     days_until = (next_dt - today).days

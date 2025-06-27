@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // choose mode based on presence of raw_beat_pct
       if (typeof item.raw_beat_pct === 'number') {
         card.classList.add('card', 'mode-prediction');
-        const pct = Math.round(item.raw_beat_pct * 100);
+        const pct = item.raw_beat_pct;
         // compute gauge arc
         const angle = item.raw_beat_pct * Math.PI;              // 0 → π
         const cx = 50, cy = 50, r = 40;
