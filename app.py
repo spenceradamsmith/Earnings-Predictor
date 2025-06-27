@@ -70,6 +70,9 @@ def predict():
 
     # If earnings are more than a week away, return fields + message
     if days_until > 7:
+        wait = days_until - 7
+        next_str = next_dt.strftime("%m-%d-%Y")
+        check_str = (today + timedelta(days=wait)).strftime("%m-%d-%Y")
         return jsonify({
             "company_name": company_name,
             "ticker": ticker,
@@ -160,7 +163,7 @@ def predict():
         "expected_eps":      round(eps_est, 2),
         "raw_beat_pct":      round(raw_pct, 2),
         "scaled_beat_pct":   round(scaled_pct, 2),
-        "days_until": days_until,
+        "days_until":        days_until,
     }), 200
 
 if __name__ == "__main__":
