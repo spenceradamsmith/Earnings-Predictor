@@ -129,6 +129,7 @@ def predict():
             "logo": logo,
             "earnings_date": earnings_date_str,
             "expected_eps": round(eps_est, 2),
+            "days_until": days_until,
             "message": (
                 f"{ticker}'s next earnings ({next_str}) are in {days_until} days. "
                 f"Check back in {wait_days} day(s), on {check_date} for a prediction."
@@ -249,6 +250,7 @@ def predict():
             "expected_eps": round(eps_est, 2),
             "raw_beat_pct": round(raw_pct, 2),
             "scaled_beat_pct": round(scaled_pct, 2),
+            "days_until": days_until,
         }
         return jsonify(response), 200
 
