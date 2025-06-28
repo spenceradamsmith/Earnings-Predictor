@@ -4,6 +4,21 @@ function getLogoSrc(ticker, fallbackLogo) {
   return customLogos[ticker] || fallbackLogo;
 }
 
+// Add fade effect to categories navigation
+const nav = document.querySelector('.categories-nav');
+const wrapper = document.querySelector('.categories-wrapper');
+function updateFade() {
+  const atStart = nav.scrollLeft === 0;
+  const atEnd = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth;
+  wrapper.classList.toggle('scrolled', !atStart);
+  wrapper.classList.toggle('at-start', atStart);
+  wrapper.classList.toggle('at-end',   atEnd);
+}
+// whenever nav moves, update the wrapper’s classes
+nav.addEventListener('scroll', updateFade);
+updateFade();
+
+
 const top20Tickers = [
   'AAPL','MSFT','GOOGL','AMZN','TSLA',
   'NVDA','BRK.B','META','UNH','V',
@@ -104,7 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!res.ok) throw new Error(res.status);
         const json = await res.json();
 
-        // parse date
+        // parse name and date
+        const rawName = json.company_name || '';
+        const name = rawName.replace(/\s*\(The\)$/, '');
         let date;
         if (json.earnings_date) {
           date = new Date(json.earnings_date);
@@ -113,16 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           return null;
         }
-
+        const expectedEps = parseFloat(json.expected_eps).toFixed(2);
         // compute days until for countdown
         const daysUntil = Math.ceil((date - now) / MS_PER_DAY);
 
         return {
           ticker:       ticker,
-          name:         json.company_name,
+          name:         name,
           logo:         json.logo,
           date:         date,
-          expected_eps: json.expected_eps,
+          expected_eps: expectedEps,
           days_until:   daysUntil,
           raw_beat_pct: json.raw_beat_pct  // may be undefined
         };
@@ -157,14 +174,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         card.innerHTML = `
           <div class="card-content">
-            <div class="logo">
-              <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
+            <div class="header-row">
+              <div class="logo">
+                <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
+              </div>
+              <div class="header">
+                <h2 class="company">${item.name}</h2>
+                <span class="ticker">${item.ticker}</span>
+              </div>
             </div>
-            <div class="header">
-              <h2 class="company">${item.name}</h2>
-              <span class="ticker">${item.ticker}</span>
-            </div>
-            <div class="details">
+              <div class="details">
               <div class="info">
                 <span class="label">Next Release:</span>
                 <span class="value">${item.date.toLocaleDateString()}</span>
@@ -190,12 +209,14 @@ document.addEventListener('DOMContentLoaded', () => {
         card.classList.add('card', 'mode-countdown');
         card.innerHTML = `
           <div class="card-content">
-            <div class="logo">
-              <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
-            </div>
-            <div class="header">
-              <h2 class="company">${item.name}</h2>
-              <span class="ticker">${item.ticker}</span>
+            <div class="header-row">
+              <div class="logo">
+                <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
+              </div>
+              <div class="header">
+                <h2 class="company">${item.name}</h2>
+                <span class="ticker">${item.ticker}</span>
+              </div>
             </div>
             <div class="details">
               <div class="info">
