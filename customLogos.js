@@ -97,7 +97,7 @@ window.customLogos = {
   LEG: 'https://companieslogo.com/img/orig/LEG-25580a01.png?t=1720244492',
 
   // Consumer Staples
-  PEP: '',
+  PEP: 'https://companieslogo.com/img/orig/PEP-a33c9cf1.png?t=1720244493',
   WMT: '',
   COST: '',
   MO: '',
