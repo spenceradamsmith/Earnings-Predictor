@@ -154,7 +154,7 @@ input:focus {
 main {
   max-width: 1500px;
   margin: 0 auto;
-  padding-top: calc(clamp(10px, 2vw, 20px) + clamp(36px, 4vw, 48px) + clamp(30px, 4vw, 40px) + 20px);
+  padding-top: calc(clamp(10px, 2vw, 20px) + clamp(36px, 4vw, 48px) + clamp(30px, 4vw, 40px) + 45px);
   box-sizing: border-box;
 }
 
@@ -168,13 +168,13 @@ main {
   box-sizing: border-box;
   margin: 0;
   list-style: none;
+  margin-bottom: 8px;
 }
 
 .card {
   background-color: #fff;
   border-radius: 10px;
   border: 1px solid #ddd;
-  /* 16:9 aspect ratio via padding trick */
   height: 0;
   padding-top: 56.25%;
   position: relative;
@@ -226,6 +226,7 @@ main {
 /* 4) tweak text */
 .header-row .company {
   margin: 0;
+  color: #333;
   font-size: 1.1rem;
   line-height: 1.2;
 }
@@ -235,7 +236,6 @@ main {
   font-size: 0.9rem;
   margin-top: 0.2rem;
 }
-
 
 /* common .visual styles */
 .visual {
@@ -269,11 +269,11 @@ main {
 /* 1. Stack “days” under the number */
 .visual.countdown .count-unit {
   display: flex;
-  flex-direction: column;      /* number on top, “days” underneath */
+  flex-direction: column;
   align-items: center;
 }
 
-/* Stack company + ticker vertically, with no gap */
+/* Stack company and ticker vertically, with no gap */
 .card .header {
   display: flex;
   flex-direction: column;
@@ -281,7 +281,6 @@ main {
   gap: 0;
 }
 
-/* (Optional) ensure no default margins on each line) */
 .card .header .company,
 .card .header .ticker {
   margin: 0;
@@ -294,14 +293,73 @@ main {
 }
 
 .card-content .logo img {
-  width: 55px;   /* Adjust this to desired size */
-  height: 55px;  /* Maintain equal width and height for consistency */
-  object-fit: contain; /* Ensures logo maintains aspect ratio */
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
   box-sizing: border-box;
   padding: 5px;
   border-radius: 10px;
   background-color: white;
   box-shadow: 0 0px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* search dropdown panel attached to the search box */
+.search-container {
+  position: relative;
+  width: clamp(200px, 40%, 60vw);
+  max-width: 500px;
+  margin-bottom: 1rem;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 1001;
+}
+
+.search-results::-webkit-scrollbar {
+  width: 6px;
+}
+.search-results::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+.search-item {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-size: clamp(12px, 2.5vw, 16px);
+  color: #333;
+}
+.search-item .item-name {
+  color: #666;
+}
+
+.search-item:hover {
+  background: #f0f0f0;
+}
+.search-container {
+  width: clamp(200px, 40%, 60vw);
+  max-width: 500px;
+  position: relative;
+}
+.search-box {
+  width: 100%;
+}
+.search-results:empty {
+  display: none;
 }
 
 /* One card per row on small screens */

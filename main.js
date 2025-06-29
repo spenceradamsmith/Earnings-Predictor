@@ -1,4 +1,5 @@
 const customLogos = window.customLogos || {};
+const searchStocks = window.searchStocks || {};
 
 function getLogoSrc(ticker, fallbackLogo) {
   return customLogos[ticker] || fallbackLogo;
@@ -12,95 +13,94 @@ function updateFade() {
   const atEnd = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth;
   wrapper.classList.toggle('scrolled', !atStart);
   wrapper.classList.toggle('at-start', atStart);
-  wrapper.classList.toggle('at-end',   atEnd);
+  wrapper.classList.toggle('at-end', atEnd);
 }
 // whenever nav moves, update the wrapper’s classes
 nav.addEventListener('scroll', updateFade);
 updateFade();
 
-
 const top20Tickers = [
-  'AAPL','MSFT','GOOGL','AMZN','TSLA',
-  'NVDA','BRK.B','META','UNH','V',
-  'JPM','JNJ','MA','PG','HD',
-  'ADBE','PYPL','XOM','KO','PFE'
+  'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA',
+  'NVDA', 'BRK.B', 'META', 'UNH', 'V',
+  'JPM', 'JNJ', 'MA', 'PG', 'HD',
+  'ADBE', 'PYPL', 'XOM', 'KO', 'PFE'
 ];
 
 const categoryTickers = {
   'All': top20Tickers,
   'Technology': [
-    'AAPL','MSFT','GOOGL','ORCL','IBM',
-    'INTC','CSCO','NVDA','AMD','ADBE',
-    'SAP','CRM','TXN','QCOM','AVGO',
-    'AMAT','MU','NOW','SNPS','TEAM'
+    'AAPL', 'MSFT', 'GOOGL', 'ORCL', 'IBM',
+    'INTC', 'CSCO', 'NVDA', 'AMD', 'ADBE',
+    'SAP', 'CRM', 'TXN', 'QCOM', 'AVGO',
+    'AMAT', 'MU', 'NOW', 'SNPS', 'TEAM'
   ],
   'Healthcare': [
-    'JNJ','PFE','UNH','MRK','ABBV',
-    'LLY','ABT','TMO','AMGN','CVS',
-    'GILD','BMY','ZTS','DHR','MDT',
-    'SYK','BDX','IQV','BSX','ILMN'
+    'JNJ', 'PFE', 'UNH', 'MRK', 'ABBV',
+    'LLY', 'ABT', 'TMO', 'AMGN', 'CVS',
+    'GILD', 'BMY', 'ZTS', 'DHR', 'MDT',
+    'SYK', 'BDX', 'IQV', 'BSX', 'ILMN'
   ],
   'Financials': [
-    'BRK.B','JPM','BAC','WFC','C',
-    'GS','MS','AXP','USB','PNC',
-    'TFC','BK','SCHW','BLK','PRU',
-    'MET','AIG','MMC','ALL','CME'
+    'BRK.B', 'JPM', 'BAC', 'WFC', 'C',
+    'GS', 'MS', 'AXP', 'USB', 'PNC',
+    'TFC', 'BK', 'SCHW', 'BLK', 'PRU',
+    'MET', 'AIG', 'MMC', 'ALL', 'CME'
   ],
   'Consumer Discretionary': [
-    'AMZN','TSLA','HD','MCD','NKE',
-    'SBUX','LOW','CMG','MAR','BKNG',
-    'TJX','ULTA','ROST','DRI','DIS',
-    'WHR','YUM','GM','F','LEG'
+    'AMZN', 'TSLA', 'HD', 'MCD', 'NKE',
+    'SBUX', 'LOW', 'CMG', 'MAR', 'BKNG',
+    'TJX', 'ULTA', 'ROST', 'DRI', 'DIS',
+    'WHR', 'YUM', 'GM', 'F', 'LEG'
   ],
   'Consumer Staples': [
-    'PG','KO','PEP','WMT','COST',
-    'MO','PM','CL','KMB','STZ',
-    'GIS','MDLZ','MKC','HSY','KR',
-    'DG','EL','SYY','MNST', 'KDP'
+    'PG', 'KO', 'PEP', 'WMT', 'COST',
+    'MO', 'PM', 'CL', 'KMB', 'STZ',
+    'GIS', 'MDLZ', 'MKC', 'HSY', 'KR',
+    'DG', 'EL', 'SYY', 'MNST', 'KDP'
   ],
   'Energy': [
-    'XOM','CVX','COP','SLB','PSX',
-    'VLO','HES','EOG','PXD','OXY',
-    'DVN','APA','MRO','MUR','EQT',
-    'FTI','HAL','KMI','OKE','ENB'
+    'XOM', 'CVX', 'COP', 'SLB', 'PSX',
+    'VLO', 'HES', 'EOG', 'PXD', 'OXY',
+    'DVN', 'APA', 'MRO', 'MUR', 'EQT',
+    'FTI', 'HAL', 'KMI', 'OKE', 'ENB'
   ],
   'Industrials': [
-    'BA','HON','UPS','CAT','GE',
-    'LMT','DE','MMM','RTX','EMR',
-    'PCAR','CMI','UNP','FDX','ROK',
-    'NSC','CSX','NOC','TXT','DOV'
+    'BA', 'HON', 'UPS', 'CAT', 'GE',
+    'LMT', 'DE', 'MMM', 'RTX', 'EMR',
+    'PCAR', 'CMI', 'UNP', 'FDX', 'ROK',
+    'NSC', 'CSX', 'NOC', 'TXT', 'DOV'
   ],
   'Materials': [
-    'LIN','APD','ECL','SHW','FCX',
-    'DD','OLN','NEM','VMC','PPG',
-    'STLD','CLF','NUE','BLL','SEE',
-    'IFF','MOS','PKG','MLM','CF'
+    'LIN', 'APD', 'ECL', 'SHW', 'FCX',
+    'DD', 'OLN', 'NEM', 'VMC', 'PPG',
+    'STLD', 'CLF', 'NUE', 'BLL', 'SEE',
+    'IFF', 'MOS', 'PKG', 'MLM', 'CF'
   ],
   'Utilities': [
-    'NEE','DUK','SO','AEP','EXC',
-    'SRE','XEL','ED','D','WEC',
-    'NRG','AES','PPL','PCG','EIX',
-    'PEG','FE','ES','ATO','OGE'
+    'NEE', 'DUK', 'SO', 'AEP', 'EXC',
+    'SRE', 'XEL', 'ED', 'D', 'WEC',
+    'NRG', 'AES', 'PPL', 'PCG', 'EIX',
+    'PEG', 'FE', 'ES', 'ATO', 'OGE'
   ],
   'Real Estate': [
-    'AMT','PLD','SPG','PSA','WPC',
-    'CBRE','AVB','EQR','HST','ESS',
-    'VTR','O','UDR','DLR','EQIX',
-    'KIM','IRM','FRT','REG','SLG'
+    'AMT', 'PLD', 'SPG', 'PSA', 'WPC',
+    'CBRE', 'AVB', 'EQR', 'HST', 'ESS',
+    'VTR', 'O', 'UDR', 'DLR', 'EQIX',
+    'KIM', 'IRM', 'FRT', 'REG', 'SLG'
   ],
   'Communication Services': [
-    'GOOGL','META','NFLX','DIS','CMCSA',
-    'T','VZ','ABNB','EA','TTWO',
-    'CHTR','PARA','DISH','SPOT','ROKU',
-    'PINS','SNAP','WBD','OMC','MTCH'
+    'GOOGL', 'META', 'NFLX', 'DIS', 'CMCSA',
+    'T', 'VZ', 'ABNB', 'EA', 'TTWO',
+    'CHTR', 'PARA', 'DISH', 'SPOT', 'ROKU',
+    'PINS', 'SNAP', 'WBD', 'OMC', 'MTCH'
   ]
 };
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('▶ DOM fully loaded');
-  const nav       = document.querySelector('.categories-nav');
+  const nav = document.querySelector('.categories-nav');
   const cardsGrid = document.querySelector('.cards-grid');
-  const now       = Date.now();
+  const now = Date.now();
   const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
   // Fetch & render cards for a category
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
           date:         date,
           expected_eps: expectedEps,
           days_until:   daysUntil,
-          raw_beat_pct: json.raw_beat_pct  // may be undefined
+          raw_beat_pct: json.raw_beat_pct
         };
       } catch (err) {
         console.warn(`✖️ ${ticker} failed:`, err);
@@ -255,9 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  //
-  // 3) Wire up category buttons
-  //
+  // Category buttons
   nav.addEventListener('click', e => {
     if (e.target.tagName !== 'BUTTON') return;
     nav.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
@@ -266,9 +264,98 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  //
-  // 4) Auto-click “All” on load
-  //
+  // Auto-click “All” on load
   const initial = nav.querySelector('button.selected') || nav.querySelector('button');
   if (initial) initial.click();
+
+  const header = document.querySelector('.header-top h1');
+  const allButton = document.getElementById('all-button');
+  if (header && allButton) {
+    header.addEventListener('click', () => {
+      allButton.click();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // Search functionality
+  const searchInput   = document.querySelector('.search-box input');
+  const searchResults = document.querySelector('.search-results');
+  const stocks        = window.searchStocks || [];
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+
+    if (!q) {
+      searchResults.innerHTML = '';
+      return;
+    }
+
+    const matches = stocks.filter(s =>
+      s.ticker.toLowerCase().includes(q) ||
+      s.name.toLowerCase().includes(q)
+    );
+
+    searchResults.innerHTML = matches.map(item => `
+      <div class="search-item" data-ticker="${item.ticker}">
+        <strong>${item.ticker}</strong> – ${item.name}
+      </div>
+    `).join('');
+
+    // attach click handlers
+    searchResults.querySelectorAll('.search-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const ticker = el.dataset.ticker;
+        console.log('Clicked', ticker);
+        searchResults.innerHTML = '';
+        searchInput.value = ticker;
+      });
+    });
+  });
+
+  const searchContainer = document.querySelector('.search-container');
+  document.addEventListener('click', (event) => {
+    if (!searchContainer.contains(event.target)) {
+      searchResults.innerHTML = '';
+      searchResults.style.display = 'none';
+    }
+  });
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    if (!q) {
+      searchResults.innerHTML = '';
+      searchResults.style.display = 'none';
+      return;
+    }
+
+    const matches = stocks.filter(s =>
+      s.ticker.toLowerCase().includes(q) ||
+      s.name.toLowerCase().includes(q)
+    );
+
+    searchResults.innerHTML = matches.map(item => `
+      <div class="search-item" data-ticker="${item.ticker}">
+        <div class="item-ticker"><strong>${item.ticker}</strong></div>
+        <div class="item-name">${item.name}</div>
+      </div>
+    `).join('');
+
+    // re-attach click handlers to the new items
+    searchResults.querySelectorAll('.search-item').forEach(el => {
+      el.addEventListener('click', () => {
+        searchInput.value = el.dataset.ticker;
+        searchResults.innerHTML = '';
+        searchResults.style.display = 'none';
+      });
+    });
+
+    // show the box if there are results, hide if empty
+    searchResults.style.display = matches.length ? 'block' : 'none';
+  });
+
+  // when you click or tab back into the input, rerun the filter
+  searchInput.addEventListener('focus', () => {
+    if (searchInput.value.trim()) {
+      searchInput.dispatchEvent(new Event('input'));
+    }
+  });
 });
