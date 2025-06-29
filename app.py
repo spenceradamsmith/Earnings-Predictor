@@ -57,50 +57,42 @@ def predict():
     earnings_date_str = "TBD"
     days_until = None
     next_dt = None
-    try:
-        cal = stock.calendar or {}
-        raw_dates = []
-        if isinstance(cal, dict):
-            # get the field, which might be a Timestamp, a list, or a DatetimeIndex
-            candidate = cal.get("Earnings Date") or cal.get("earningsDate")
-            if candidate is None:
-                raw_dates = []
-            elif isinstance(candidate, pd.DatetimeIndex):
-                raw_dates = candidate.tolist()
-            elif isinstance(candidate, (list, np.ndarray)):
-                raw_dates = list(candidate)
+    
+    cal = stock.calendar
+    raw_dates = []
+    if isinstance(cal, dict):
+        # old style (dict) API
+        candidate = cal.get("Earnings Date") or cal.get("earningsDate")
+        if candidate is not None:
+            items = candidate if isinstance(candidate, (list, np.ndarray)) else [candidate]
+            raw_dates = items
+    elif isinstance(cal, pd.DataFrame) and not cal.empty:
+        # new style (DataFrame) API
+        if "Earnings Date" in cal.index:
+            val = cal.loc["Earnings Date"].iat[0]
+            raw_dates = [val]
+
+    all_dates = []
+    raw_vals = raw_dates
+    for d in raw_vals:
+        try:
+            ts = pd.to_datetime(d)
+            if ts.tzinfo is not None:
+                ts = ts.tz_convert(None)
             else:
-                raw_dates = [candidate]
-        else:
-            # in case you ever see a DataFrame
-            try:
-                df = cal
-                if "Earnings Date" in df.index:
-                    val = df.loc["Earnings Date"]
-                    raw_dates = val.tolist() if hasattr(val, "tolist") else [val]
-            except Exception as e:
-                print("Calendar‐DF parsing error:", e)
-
-        raw_vals = raw_dates
-        all_dates = []
-        for d in raw_vals:
-            try:
-                ts = pd.to_datetime(d)
-                ts = ts.tz_convert(None).normalize() if hasattr(ts, 'tzinfo') else ts.normalize()
-                all_dates.append(ts)
-            except Exception:
-                continue
-
-        # Filter to future dates
-        future_dates = [d for d in all_dates if d >= today]
-        if future_dates:
-            next_dt = min(future_dates)
-            earnings_date_str = next_dt.strftime("%Y-%m-%d")
-            days_until = (next_dt - today).days
-    except Exception:
-        # leave earnings_date_str as TBD and days_until as None
-        pass
-
+                ts = ts.tz_localize(None)
+            ts = ts.normalize()
+            all_dates.append(ts)
+        except Exception:
+            continue
+        
+    # Filter to future dates
+    future_dates = [d for d in all_dates if d >= today]
+    if future_dates:
+        next_dt = min(future_dates)
+        earnings_date_str = next_dt.strftime("%Y-%m-%d")
+        days_until = (next_dt - today).days
+  
     # Forward EPS estimate
     eps_raw = info.get("forwardEps")
     try:
