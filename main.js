@@ -245,7 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="visual countdown">
               <div class="count">${item.days_until - 7}</div>
-              <div class="unit">days until release</div>
+              <div class="days">days</div>
+              <div class="unit">until release</div>
             </div>
           </div>
         `;
