@@ -56,7 +56,7 @@ const categoryTickers = {
     'PG','KO','PEP','WMT','COST',
     'MO','PM','CL','KMB','STZ',
     'GIS','MDLZ','MKC','HSY','KR',
-    'DG','EL','SYY','MNST'
+    'DG','EL','SYY','MNST', 'KDP'
   ],
   'Energy': [
     'XOM','CVX','COP','SLB','PSX',
@@ -90,9 +90,9 @@ const categoryTickers = {
   ],
   'Communication Services': [
     'GOOGL','META','NFLX','DIS','CMCSA',
-    'T','VZ','ATVI','EA','TTWO',
-    'CHTR','VIAC','DISH','SPOT','ROKU',
-    'PINS','SNAP','WB','OMC','MTCH'
+    'T','VZ','ABNB','EA','TTWO',
+    'CHTR','PARA','DISH','SPOT','ROKU',
+    'PINS','SNAP','WBD','OMC','MTCH'
   ]
 };
 
@@ -121,7 +121,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // parse name and date
         const rawName = json.company_name || '';
-        const name = rawName.replace(/\s*\(The\)$/, '');
+        const name1 = rawName.replace(/\s*\(The\)$/, '');
+        const name2 = name1.replace(/\s*\(T$/, '');
+        const name3 = name2.replace(/\s*Packaging Corporation of Americ$/, 'Packaging Corporation of America');
+        const name4 = name3.replace(/,\s*Inc(?!\.)\b/, ', Inc.');
+        const name5 = name4.replace(/\s* \(Holdi$/, '');
+        const name6 = name5.replace(/\s* \(D\/B\/A\)$/, '');
+        const name7 = name6.replace(/\s* \(Holdin$/, '');
+        const name8 = name7.replace(/\bDBA\b\s*/gi, '');
+        const name9 = name8.replace(/\s*(?:\(?REIT\)?\s*)$/i, '');
+        const name10 = name9.replace(/\s* \(REI$/, '');
+        const name11 = name10.replace(/\s* \(Del$/, '');
+        const name12 = name11.replace(/\s* \(HC\)$/, '');
+        const name13 = name12.replace(/\s* S.A.$/, '');
+        const name14 = name13.replace(/,\s*$/, '');
+        const name = name14.replace(/-\s*$/, '');
+
         let date;
         if (json.earnings_date) {
           date = new Date(json.earnings_date);
@@ -248,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nav.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
     e.target.classList.add('selected');
     fetchAndDisplay(e.target.textContent);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   //
