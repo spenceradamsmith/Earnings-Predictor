@@ -58,21 +58,30 @@ def predict():
     days_until = None
     next_dt = None
     try:
-        cal = stock.calendar
-        # Normalize raw dates
-        if isinstance(cal, pd.DataFrame):
-            raw = cal.loc.get("Earnings Date", [])
+        cal = stock.calendar or {}
+        raw_dates = []
+        if isinstance(cal, dict):
+            # get the field, which might be a Timestamp, a list, or a DatetimeIndex
+            candidate = cal.get("Earnings Date") or cal.get("earningsDate")
+            if candidate is None:
+                raw_dates = []
+            elif isinstance(candidate, pd.DatetimeIndex):
+                raw_dates = candidate.tolist()
+            elif isinstance(candidate, (list, np.ndarray)):
+                raw_dates = list(candidate)
+            else:
+                raw_dates = [candidate]
         else:
-            raw = cal.get("Earnings Date") or cal.get("earningsDate")
+            # in case you ever see a DataFrame
+            try:
+                df = cal
+                if "Earnings Date" in df.index:
+                    val = df.loc["Earnings Date"]
+                    raw_dates = val.tolist() if hasattr(val, "tolist") else [val]
+            except Exception as e:
+                print("Calendar‐DF parsing error:", e)
 
-        # Flatten to list
-        if isinstance(raw, dict):
-            raw_vals = list(raw.values())
-        elif not isinstance(raw, (list, np.ndarray)):
-            raw_vals = [raw]
-        else:
-            raw_vals = list(raw)
-
+        raw_vals = raw_dates
         all_dates = []
         for d in raw_vals:
             try:
@@ -94,7 +103,11 @@ def predict():
 
     # Forward EPS estimate
     eps_raw = info.get("forwardEps")
-    eps_est = round(float(eps_raw), 2) if isinstance(eps_raw, (float, int)) else "TBD"
+    try:
+        eps_val = float(eps_raw)
+        eps_est = round(eps_val, 2)
+    except Exception:
+        eps_est = "TBD"
 
     # If earnings are more than a week away, prompt to check back
     if isinstance(days_until, int) and days_until > 7:
