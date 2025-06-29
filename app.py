@@ -17,10 +17,7 @@ CORS(app)
 def predict():
     # Get ticker parameter
     ticker_param = request.args.get("ticker")
-    if ticker_param is not None:
-        ticker = ticker_param.upper()
-    else:
-        ticker = "NKE"
+    ticker = ticker_param.upper() if ticker_param else "NKE"
 
     # Load pre-trained model
     model = CatBoostClassifier()
@@ -31,57 +28,44 @@ def predict():
     info = stock.info or {}
 
     # Company name
-    if "shortName" in info and info["shortName"]:
-        company_name = info["shortName"]
-    else:
-        company_name = ticker
+    company_name = info.get("shortName") or ticker
 
     # Website and logo
-    if "website" in info and info["website"]:
-        website = info["website"]
+    website = info.get("website")
+    if website:
         domain = website.replace("https://", "").replace("http://", "").split("/")[0]
         logo = f"https://logo.clearbit.com/{domain}?size=512"
     else:
-        website = None
         logo = None
 
-    # Short description (first four sentences)
-    if "longBusinessSummary" in info and info["longBusinessSummary"]:
-        description = info["longBusinessSummary"]
-    else:
-        description = ""
-    # Split into sentences, avoiding certain abbreviations
-    sentences = re.split(r'(?<!Inc)(?<!LLC)(?<!Co)(?<!Corp)\. ', description)
-    if len(sentences) >= 4:
-        short_desc = ". ".join(sentences[:4]).strip()
-    else:
-        short_desc = ". ".join(sentences).strip()
-    if short_desc:
-        if not short_desc.endswith("."):
-            short_desc += "."
-    else:
-        short_desc = ""
+    # Description
+    description = info.get("longBusinessSummary", "")
 
     # Beta value
     beta_raw = info.get("beta")
-    if beta_raw is None or (isinstance(beta_raw, float) and np.isnan(beta_raw)):
-        beta_value = None
-    else:
-        beta_value = round(beta_raw, 2)
+    beta_value = round(beta_raw, 2) if isinstance(beta_raw, (float, int)) and not np.isnan(beta_raw) else None
 
-        # Determine next earnings date
+    # P/E ratio, sector, industry, and market cap
+    pe_raw = info.get("trailingPE")
+    pe_ratio = round(pe_raw, 2) if isinstance(pe_raw, (float, int)) and not np.isnan(pe_raw) else None
+    sector = info.get("sector")
+    industry = info.get("industry")
+    market_cap = info.get("marketCap")
+
+    # Determine next earnings date
     today = pd.Timestamp.now().normalize()
+    earnings_date_str = "TBD"
+    days_until = None
+    next_dt = None
     try:
         cal = stock.calendar
-
-        # 1) Normalize into a list of pd.Timestamp
-        raw = None
+        # Normalize raw dates
         if isinstance(cal, pd.DataFrame):
-            raw = cal.loc["Earnings Date"].values
+            raw = cal.loc.get("Earnings Date", [])
         else:
             raw = cal.get("Earnings Date") or cal.get("earningsDate")
 
-        # Wrap single values/lists/dicts into a flat list
+        # Flatten to list
         if isinstance(raw, dict):
             raw_vals = list(raw.values())
         elif not isinstance(raw, (list, np.ndarray)):
@@ -89,76 +73,63 @@ def predict():
         else:
             raw_vals = list(raw)
 
-        # Parse into Timestamps
         all_dates = []
         for d in raw_vals:
             try:
-                ts = pd.to_datetime(d).tz_convert(None).normalize() if hasattr(d, "tzinfo") else pd.to_datetime(d).normalize()
+                ts = pd.to_datetime(d)
+                ts = ts.tz_convert(None).normalize() if hasattr(ts, 'tzinfo') else ts.normalize()
                 all_dates.append(ts)
             except Exception:
                 continue
 
-        # 2) Keep only today-or-later
+        # Filter to future dates
         future_dates = [d for d in all_dates if d >= today]
-
-        if not future_dates:
-            raise ValueError("no upcoming earnings dates")
-
-        # 3) Pick the soonest
-        next_dt = min(future_dates)
-
-    except Exception as e:
-        return jsonify({
-            "company_name": company_name,
-            "ticker": ticker,
-            "short_description": short_desc,
-            "beta": beta_value,
-            "website": website,
-            "logo": logo,
-            "message": f"No upcoming earnings found for {ticker}: {e}"
-        }), 200
-
-    earnings_date_str = next_dt.strftime("%Y-%m-%d")
-    days_until = (next_dt - today).days
+        if future_dates:
+            next_dt = min(future_dates)
+            earnings_date_str = next_dt.strftime("%Y-%m-%d")
+            days_until = (next_dt - today).days
+    except Exception:
+        # leave earnings_date_str as TBD and days_until as None
+        pass
 
     # Forward EPS estimate
     eps_raw = info.get("forwardEps")
-    if eps_raw is None:
-        eps_est = 0.0
-    else:
-        eps_est = float(eps_raw)
+    eps_est = round(float(eps_raw), 2) if isinstance(eps_raw, (float, int)) else "TBD"
 
-    # If earnings are more than a week away
-    if days_until > 7:
+    # If earnings are more than a week away, prompt to check back
+    if isinstance(days_until, int) and days_until > 7:
         wait_days = days_until - 7
-        next_str = next_dt.strftime("%m-%d-%Y")
-        check_date = (today + timedelta(days=wait_days)).strftime("%m-%d-%Y")
+        check_date = (today + timedelta(days=wait_days)).strftime("%Y-%m-%d")
+        message = (
+            f"{ticker}'s next earnings ({earnings_date_str}) are in {days_until} days. "
+            f"Check back in {wait_days} day(s), on {check_date} for a prediction."
+        )
         response = {
             "company_name": company_name,
             "ticker": ticker,
-            "short_description": short_desc,
+            "description": description,
             "beta": beta_value,
+            "pe_ratio": pe_ratio,
+            "sector": sector,
+            "industry": industry,
+            "market_cap": market_cap,
             "website": website,
             "logo": logo,
             "earnings_date": earnings_date_str,
-            "expected_eps": round(eps_est, 2),
+            "expected_eps": eps_est,
             "days_until": days_until,
-            "message": (
-                f"{ticker}'s next earnings ({next_str}) are in {days_until} days. "
-                f"Check back in {wait_days} day(s), on {check_date} for a prediction."
-            )
+            "message": message
         }
         return jsonify(response), 200
-    else:
-        # Compute features for prediction
+
+    # If earnings within a week, compute prediction
+    if isinstance(days_until, int) and days_until <= 7 and next_dt is not None:
         cutoff = next_dt - timedelta(days=7)
         price_data = yf.download(ticker, start="2013-01-01", end=(cutoff + timedelta(days=1)), auto_adjust=True, progress=False)
         spy_data = yf.download("SPY", start="2013-01-01", end=(cutoff + timedelta(days=1)), auto_adjust=True, progress=False)
-        # Filter up to cutoff
         price_data = price_data[price_data.index <= cutoff]
         spy_data = spy_data[spy_data.index <= cutoff]
 
-        # Ensure 1D series
         close = price_data["Close"]
         volume = price_data["Volume"]
         if getattr(close, "ndim", 1) != 1:
@@ -171,10 +142,7 @@ def predict():
         macd_diff = MACD(close).macd_diff().iloc[-1]
         sma20 = SMAIndicator(close, 20).sma_indicator().iloc[-1]
         sma50 = SMAIndicator(close, 50).sma_indicator().iloc[-1]
-        if sma50 != 0:
-            sma_ratio = sma20 / sma50
-        else:
-            sma_ratio = np.nan
+        sma_ratio = sma20 / sma50 if sma50 != 0 else np.nan
 
         # Returns and volatility
         if len(close) >= 30:
@@ -182,26 +150,17 @@ def predict():
             volatility_30d = close[-30:].pct_change().std()
             vol_avg = volume[-30:].mean()
             vol_max = volume[-30:].max()
-            if vol_max != 0:
-                vol_norm = vol_avg / vol_max
-            else:
-                vol_norm = np.nan
+            vol_norm = vol_avg / vol_max if vol_max != 0 else np.nan
         else:
             price_ret_30d = np.nan
             volatility_30d = np.nan
             vol_norm = np.nan
 
-        if len(close) >= 14:
-            price_ret_7d = close.iloc[-7] / close.iloc[-14] - 1
-        else:
-            price_ret_7d = np.nan
+        price_ret_7d = close.iloc[-7] / close.iloc[-14] - 1 if len(close) >= 14 else np.nan
 
         # SPY return
         spy_close = spy_data["Close"]
-        if len(spy_close) >= 30:
-            spy_return = float(spy_close.iloc[-1] / spy_close.iloc[-30] - 1)
-        else:
-            spy_return = 0.0
+        spy_return = float(spy_close.iloc[-1] / spy_close.iloc[-30] - 1) if len(spy_close) >= 30 else 0.0
 
         price_to_avg30d = close.iloc[-1] / close.iloc[-30:].mean() if len(close) >= 30 else np.nan
 
@@ -216,10 +175,9 @@ def predict():
             eps_surprise_avg = eps_surprises.mean()
         else:
             eps_surprise_avg = np.nan
-        
-        # Build feature row
+
         feature_row = {
-            "sector": info.get("sector", np.nan),
+            "sector": sector,
             "beta": beta_raw,
             "eps_estimate": eps_est,
             "price_to_avg_30d": price_to_avg30d,
@@ -251,21 +209,42 @@ def predict():
             scaled_val = (prob / thresh) * 0.5
         scaled_pct = scaled_val * 100
 
-        # Final response
         response = {
             "company_name": company_name,
             "ticker": ticker,
-            "short_description": short_desc,
+            "description": description,
             "beta": beta_value,
+            "pe_ratio": pe_ratio,
+            "sector": sector,
+            "industry": industry,
+            "market_cap": market_cap,
             "website": website,
             "logo": logo,
             "earnings_date": earnings_date_str,
-            "expected_eps": round(eps_est, 2),
+            "expected_eps": eps_est,
             "raw_beat_pct": round(raw_pct, 2),
             "scaled_beat_pct": round(scaled_pct, 2),
-            "days_until": days_until,
+            "days_until": days_until
         }
         return jsonify(response), 200
+
+    # If no upcoming earnings or data unavailable
+    response = {
+        "company_name": company_name,
+        "ticker": ticker,
+        "description": description,
+        "beta": beta_value,
+        "pe_ratio": pe_ratio,
+        "sector": sector,
+        "industry": industry,
+        "market_cap": market_cap,
+        "website": website,
+        "logo": logo,
+        "earnings_date": "TBD",
+        "expected_eps": "TBD",
+        "days_until": None
+    }
+    return jsonify(response), 200
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
