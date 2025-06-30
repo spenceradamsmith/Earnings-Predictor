@@ -8,6 +8,7 @@ function getLogoSrc(ticker, fallbackLogo) {
 function showCardsGrid() {
   const content = document.querySelector('.content');
   content.classList.remove('show-search');
+  window.localStorage.removeItem('lastStock');
 }
 function makeClickableLink(website) {
   if (!website) {
@@ -329,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cardsGrid.innerHTML = '';
     showCardsGrid();
     const category = e.target.textContent;
-    // store which category we clicked
+    window.localStorage.removeItem('lastStock');
     localStorage.setItem('selectedCategory', category);
 
     nav.querySelectorAll('button').forEach(b => b.classList.remove('selected'));

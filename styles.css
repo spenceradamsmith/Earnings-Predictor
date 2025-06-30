@@ -233,12 +233,16 @@ main {
 }
 .information {
   display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
   gap: 10px;
   grid-template-areas:
     "details visual";
   row-gap: 10px;
+}
+.information .visual {
+  justify-self: center;
+  align-self: center;;
 }
 
 /* hide the one you’re not using */
@@ -288,7 +292,7 @@ main {
 .visual {
   grid-area: visual;
   align-self: center;
-  justify-self: end;
+  justify-self: center;
   justify-content: center;
   align-items: center;
 }
@@ -298,8 +302,8 @@ main {
   position: relative;
   align-items: center;
   justify-content: center;
-  width: 110px;
-  height: 55px;
+  width: 115px;
+  height: 57.5px;
 }
 .visual.prediction .percent {
   position: absolute;
@@ -312,8 +316,8 @@ main {
 }
 
 .gauge {
-  width: 110px;
-  height: 55px;
+  width: 115px;
+  height: 57.5px;
   overflow: visible;
   color: rgb(218, 218, 218);
 }
