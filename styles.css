@@ -711,7 +711,7 @@ main {
     grid-template-columns: 1fr;
   }
   .search-box input::placeholder {
-    font-size: 12px;
+    font-size: 8px;
   }
   .information {
     display: grid;
