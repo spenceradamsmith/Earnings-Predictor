@@ -247,9 +247,41 @@ main {
   justify-content: center;
 }
 /* gauge sizing */
-.visual.prediction { flex-direction: column; }
-.gauge { width: 20px; height: 20px; }
-.percent { margin-top: 4px; font-size: 1.2rem; }
+.visual.prediction {
+  flex-direction: column;
+  width: 100px;
+  height: 50px;
+}
+.visual.prediction .percent {
+  position: absolute;
+  left: 50%;
+  top: 85%;
+  transform: translate(-50%, -50%);
+  font-size: 1.25rem;
+  pointer-events: none;
+}
+
+.gauge {
+  width: 100px;
+  height: 50px;
+  overflow: visible;
+}
+.gauge .bg {
+  stroke: #eee;
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.gauge .fg.green {
+  stroke: #10b981;
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.gauge .fg.red {
+  stroke: #ef4444;
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
 /* countdown sizing */
 .visual.countdown {
   flex-direction: column;

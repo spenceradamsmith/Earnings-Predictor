@@ -137,89 +137,115 @@ document.addEventListener('DOMContentLoaded', () => {
         const name14 = name13.replace(/,\s*$/, '');
         const name = name14.replace(/-\s*$/, '');
 
-        let date;
+        let date = null;
         if (json.earnings_date) {
-          date = new Date(json.earnings_date);
-        } else if (json.days_until != null) {
+          const d = new Date(json.earnings_date);
+          date = isNaN(d.getTime()) ? null : d;
+        } else if (json.days_until != null && !isNaN(json.days_until)) {
           date = new Date(now + json.days_until * MS_PER_DAY);
-        } else {
-          return null;
         }
-        const expectedEps = parseFloat(json.expected_eps).toFixed(2);
+
+        let expectedEps = null;
+        if (json.expected_eps != null) {
+          const epsNum = Number(json.expected_eps);
+          expectedEps = isNaN(epsNum) ? null : epsNum;
+        }
+
         // compute days until for countdown
-        const daysUntil = Math.ceil((date - now) / MS_PER_DAY);
+        let daysUntil = null;
+        if (json.days_until != null && !isNaN(json.days_until)) {
+          daysUntil = json.days_until;
+        } else if (date) {
+          daysUntil = Math.ceil((date - now) / MS_PER_DAY);
+        }
 
         return {
-          ticker:       ticker,
-          name:         name,
-          logo:         json.logo,
-          date:         date,
+          ticker: ticker,
+          name: name,
+          logo: json.logo,
+          date,
           expected_eps: expectedEps,
-          days_until:   daysUntil,
+          days_until: daysUntil,
           raw_beat_pct: json.raw_beat_pct
         };
       } catch (err) {
         console.warn(`✖️ ${ticker} failed:`, err);
-        return null;
+        return { ticker, name: ticker, logo: null, date: null, expected_eps: null, days_until: null, raw_beat_pct: null };
       }
     }));
 
     // filter out nulls, sort by proximity
     const items = responses
-      .filter(x => x && x.date instanceof Date && !isNaN(x.date))
-      .sort((a, b) => Math.abs(a.date - now) - Math.abs(b.date - now));
+      .filter(x => x)
+      .sort((a, b) => {
+        const aDist = a.date ? Math.abs(a.date - now) : Infinity;
+        const bDist = b.date ? Math.abs(b.date - now) : Infinity;
+        return aDist - bDist;
+      });
 
     // clear out old cards
     cardsGrid.innerHTML = '';
 
     // render
     items.forEach(item => {
+      const fmtDate = item.date
+        ? item.date.toLocaleDateString()
+        : 'TBD';
+      const fmtESP = item.expected_eps != null
+        ? item.expected_eps.toFixed(2)
+        : 'TBD';
+      const fmtDays = item.days_until != null
+        ? item.days_until
+        : '–';
       const card = document.createElement('div');
       // choose mode based on presence of raw_beat_pct
       if (typeof item.raw_beat_pct === 'number') {
         card.classList.add('card', 'mode-prediction');
         const pct = item.raw_beat_pct;
-        // compute gauge arc
-        const angle = item.raw_beat_pct * Math.PI;
-        const cx = 50, cy = 50, r = 40;
-        const x = cx + r * Math.cos(Math.PI - angle);
-        const y = cy - r * Math.sin(Math.PI - angle);
-        // large‐arc‐flag = raw_beat_pct > 0.5 ? 1 : 0
-        const laf = item.raw_beat_pct > 0.5 ? 1 : 0;
 
         card.innerHTML = `
           <div class="card-content">
             <div class="header-row">
               <div class="logo">
-                <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
+          <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
               </div>
               <div class="header">
-                <h2 class="company">${item.name}</h2>
-                <span class="ticker">${item.ticker}</span>
+          <h2 class="company">${item.name}</h2>
+          <span class="ticker">${item.ticker}</span>
               </div>
             </div>
-              <div class="details">
+            <div class="details">
               <div class="info">
-                <span class="label">Next Release:</span>
-                <span class="value">${item.date.toLocaleDateString()}</span>
+          <span class="label">Next Earnings:</span>
+          <span class="value">${fmtDate}</span>
               </div>
               <div class="info">
-                <span class="label">Expected EPS:</span>
-                <span class="value">${item.expected_eps}</span>
+          <span class="label">Expected EPS:</span>
+          <span class="value">${fmtESP}</span>
               </div>
             </div>
             <div class="visual prediction">
               <svg class="gauge" viewBox="0 0 100 50">
-                <path class="bg" d="M10,50 A40,40 0 0,1 90,50"/>
-                <path 
-                  class="fg" 
-                  d="M10,50 A40,40 0 ${laf},1 ${x.toFixed(1)},${y.toFixed(1)}"
-                />
+          <path class="bg"
+                d="M10,50 A40,40 0 0,1 90,50"
+                fill="none"/>
+          <path class="fg"
+                d="M10,50 A40,40 0 0,1 90,50"
+                fill="none"/>
               </svg>
-              <div class="percent">${pct}%</div>
+              <div class="percent">${(item.raw_beat_pct).toFixed(1)}%</div>
             </div>
           </div>
         `;
+        cardsGrid.appendChild(card);
+        const fg = card.querySelector('.gauge .fg');
+        const length = fg.getTotalLength();
+        fg.style.strokeDasharray = length;
+        const pctValue = item.raw_beat_pct;
+        const pctFraction = pctValue / 100;
+        fg.style.strokeDashoffset = length * (1 - pctFraction);
+        fg.classList.toggle('red', pctValue < 50);
+        fg.classList.toggle('green', pctValue >= 50);
       } else {
         card.classList.add('card', 'mode-countdown');
         card.innerHTML = `
@@ -235,24 +261,23 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="details">
               <div class="info">
-                <span class="label">Next Release:</span>
-                <span class="value">${item.date.toLocaleDateString()}</span>
+                <span class="label">Next Earnings:</span>
+                <span class="value">${fmtDate}</span>
               </div>
               <div class="info">
                 <span class="label">Expected EPS:</span>
-                <span class="value">${item.expected_eps}</span>
+                <span class="value">${fmtESP}</span>
               </div>
             </div>
             <div class="visual countdown">
-              <div class="count">${item.days_until - 7}</div>
+              <div class="count">${fmtDays}</div>
               <div class="days">days</div>
-              <div class="unit">until release</div>
+              <div class="unit">until prediction</div>
             </div>
           </div>
         `;
+        cardsGrid.appendChild(card);
       }
-
-      cardsGrid.appendChild(card);
     });
   }
 
