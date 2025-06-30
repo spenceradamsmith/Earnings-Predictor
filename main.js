@@ -17,7 +17,55 @@ function updateFade() {
 }
 // whenever nav moves, update the wrapper’s classes
 nav.addEventListener('scroll', updateFade);
-updateFade();
+updateFade()
+
+function formatEarningsDate(value) {
+  const date = value != null ? new Date(value) : null;
+  if (!(date instanceof Date) || isNaN(date)) {
+    return 'TBD';
+  }
+  const month = date.toLocaleString('en-US', { month: 'long' });
+  const day   = date.getDate();
+  const year  = date.getFullYear();
+  // Determine ordinal suffix
+  const rem100 = day % 100;
+  let suffix = 'th';
+  if (rem100 < 11 || rem100 > 13) {
+    switch (day % 10) {
+      case 1: suffix = 'st'; break;
+      case 2: suffix = 'nd'; break;
+      case 3: suffix = 'rd'; break;
+    }
+  }
+  return `${month} ${day}${suffix}, ${year}`;
+}
+
+function formatMarketCap(value) {
+  if (typeof value !== 'number' || isNaN(value)) {
+    return 'N/A';
+  }
+  const abs = Math.abs(value);
+  let formatted;
+  if (abs >= 1e12) {
+    formatted = (value / 1e12).toFixed(1) + ' Trillion';
+  } else if (abs >= 1e9) {
+    formatted = (value / 1e9).toFixed(1) + ' Billion';
+  } else if (abs >= 1e6) {
+    formatted = (value / 1e6).toFixed(1) + ' Million';
+  } else if (abs >= 1e3) {
+    formatted = (value / 1e3).toFixed(1) + ' Thousand';
+  } else {
+    formatted = value.toFixed(1);
+  }
+  return `$${formatted}`;
+};
+
+function formatNumber(value, decimals = 2) {
+  if (typeof value !== 'number' || isNaN(value)) {
+    return 'N/A';
+  }
+  return value.toFixed(decimals);
+}
 
 const top20Tickers = [
   'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA',
@@ -165,6 +213,9 @@ document.addEventListener('DOMContentLoaded', () => {
           logo: json.logo,
           date,
           expected_eps: expectedEps,
+          trailing_pe: json.pe_ratio,
+          market_cap: json.market_cap,
+          beta: json.beta,
           days_until: daysUntil,
           raw_beat_pct: json.raw_beat_pct
         };
@@ -197,6 +248,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const fmtDays = item.days_until != null
         ? item.days_until
         : '–';
+      const fmtTPE = formatNumber(item.trailing_pe);
+      const fmtBeta = formatNumber(item.beta);
+      const fmtMarketCapStr = formatMarketCap(item.market_cap);
       const card = document.createElement('div');
       // choose mode based on presence of raw_beat_pct
       if (typeof item.raw_beat_pct === 'number') {
@@ -207,29 +261,41 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="card-content">
             <div class="header-row">
               <div class="logo">
-          <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
+                <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
               </div>
               <div class="header">
-          <h2 class="company">${item.name}</h2>
-          <span class="ticker">${item.ticker}</span>
+                <h2 class="company">${item.name}</h2>
+                <span class="ticker">${item.ticker}</span>
               </div>
             </div>
             <div class="details">
               <div class="info">
-          <span class="label">Next Earnings:</span>
-          <span class="value">${fmtDate}</span>
+                <span class="label">Next Earnings:</span>
+                <span class="value">${formatEarningsDate(fmtDate)}</span>
               </div>
               <div class="info">
-          <span class="label">Expected EPS:</span>
-          <span class="value">${fmtESP}</span>
+                <span class="label">Expected EPS:</span>
+                <span class="value">${fmtESP}</span>
+              </div>
+              <div class="info">
+                <span class="label">Trailing P/E:</span>
+                <span class="value">${fmtTPE}</span>
+              </div>
+              <div class="info">
+                <span class="label">Beta:</span>
+                <span class="value">${fmtBeta}</span>
+              </div>
+              <div class="info">
+                <span class="label">Market Cap:</span>
+                <span class="value">${fmtMarketCapStr}</span>
               </div>
             </div>
             <div class="visual prediction">
               <svg class="gauge" viewBox="0 0 100 50">
-          <path class="bg"
-                d="M10,50 A40,40 0 0,1 90,50"
-                fill="none"/>
-          <path class="fg"
+                <path class="bg"
+                  d="M10,50 A40,40 0 0,1 90,50"
+                  fill="none"/>
+                <path class="fg"
                 d="M10,50 A40,40 0 0,1 90,50"
                 fill="none"/>
               </svg>
@@ -262,17 +328,29 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="details">
               <div class="info">
                 <span class="label">Next Earnings:</span>
-                <span class="value">${fmtDate}</span>
+                <span class="value">${formatEarningsDate(fmtDate)}</span>
               </div>
               <div class="info">
                 <span class="label">Expected EPS:</span>
                 <span class="value">${fmtESP}</span>
               </div>
+              <div class="info">
+                <span class="label">Trailing P/E:</span>
+                <span class="value">${fmtTPE}</span>
+              </div>
+              <div class="info">
+                <span class="label">Beta:</span>
+                <span class="value">${fmtBeta}</span>
+              </div>
+              <div class="info">
+                <span class="label">Market Cap:</span>
+                <span class="value">${fmtMarketCapStr}</span>
+              </div>
             </div>
             <div class="visual countdown">
               <div class="count">${fmtDays}</div>
               <div class="days">days</div>
-              <div class="unit">until prediction</div>
+              <div class="until">until prediction</div>
             </div>
           </div>
         `;
