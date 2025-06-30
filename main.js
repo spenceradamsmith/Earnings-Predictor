@@ -5,6 +5,11 @@ function getLogoSrc(ticker, fallbackLogo) {
   return customLogos[ticker] || fallbackLogo;
 }
 
+function showCardsGrid() {
+  const content = document.querySelector('.content');
+  content.classList.remove('show-search');
+}
+
 // Add fade effect to categories navigation
 const nav = document.querySelector('.categories-nav');
 const wrapper = document.querySelector('.categories-wrapper');
@@ -67,9 +72,126 @@ function formatNumber(value, decimals = 2) {
   return value.toFixed(decimals);
 }
 
+function renderStockDetail(stock) {
+  const raw = stock.days_until;
+  const daysLeft = (typeof raw === 'number' && !isNaN(raw)) ? raw - 7 : null;
+  const unit = daysLeft === 1 ? 'day' : 'days';
+  const display = daysLeft != null ? daysLeft : '–';
+  const sentences = stock.description.split(/(?<=\.)\s+/);
+  const first4 = sentences.slice(0,4).join(' ');
+  const rest = sentences.slice().join(' ');
+
+  return `
+    <button class="back-btn">&larr; Back to all stocks</button>
+
+    <div class="detail-header">
+      <div class="company-info">
+        <img src="${getLogoSrc(stock.ticker, stock.logo)}"
+             alt="${stock.name} logo"
+             class="logo">
+        <div>
+          <h1>${stock.name}
+            <span class="ticker">${stock.ticker}</span>
+          </h1>
+          <div class="tags">
+            <span class="tag sector">${stock.sector}</span>
+            <span class="tag industry">${stock.industry}</span>
+          </div>
+        </div>
+      </div>
+      <div class="countdown">
+        <div class="days-number">${display}</div>
+        <div class="days-label">${unit}</div>
+        <div class="days-sub">until prediction</div>
+      </div>
+    </div>
+
+    <div class="metrics-grid">
+      <div><strong>Next Earnings:</strong>
+           ${formatEarningsDate(stock.nextEarningsDate)}</div>
+      <div><strong>Expected EPS:</strong>
+           ${formatNumber(stock.expected_eps)}</div>
+      <div><strong>Trailing P/E:</strong>
+           ${formatNumber(stock.trailing_pe)}</div>
+      <div><strong>Beta:</strong>
+           ${formatNumber(stock.beta)}</div>
+      <div><strong>Market Cap:</strong>
+           ${formatMarketCap(stock.market_cap)}</div>
+    </div>
+
+    <div class="description">
+      <p>
+        ${first4}
+        <span id="more-text" style="display:none;"> ${rest}</span>
+      </p>
+      <button id="toggle-desc" class="toggle-btn">…Read more</button>
+    </div>
+  `;
+}
+
+function attachDetailListeners() {
+  // Read-more toggle
+  document
+    .getElementById('toggle-desc')
+    .addEventListener('click', e => {
+      const more   = document.getElementById('more-text');
+      const hidden = more.style.display === 'none';
+      more.style.display  = hidden ? 'inline' : 'none';
+      e.target.textContent = hidden ? ' Show less' : '…more';
+    });
+
+  // Back button
+  document.querySelector('.back-btn').addEventListener('click', () => {
+    document.querySelector('.content').classList.remove('show-search');
+    const searchInput = document.querySelector('.search-box input');
+    const searchResults = document.querySelector('.search-results');
+    searchInput.value = '';
+    searchResults.innerHTML = '';
+    searchResults.style.display = 'none';
+  });
+}
+
+async function fetchFullStockData(ticker) {
+  const res  = await fetch(
+    `https://earnings-predictor.onrender.com/predict?ticker=${encodeURIComponent(ticker)}`
+  );
+  const json = await res.json();
+  return {
+    ticker,
+    name:             json.company_name,
+    logo:             json.logo,
+    sector:           json.sector,
+    industry:         json.industry,
+    description:      json.description,
+    nextEarningsDate: json.earnings_date,
+    expected_eps:     json.expected_eps,
+    trailing_pe:      json.pe_ratio,
+    beta:             json.beta,
+    market_cap:       json.market_cap,
+    days_until:       json.days_until,
+    raw_beat_pct:     json.raw_beat_pct
+  };
+}
+
+function showStockDetail(stock) {
+  const container = document.getElementById('searchStock');
+  container.innerHTML = renderStockDetail(stock);
+  document.querySelector('.content').classList.add('show-search');
+  attachDetailListeners();
+}
+
+cardsGrid.addEventListener('click', async e => {
+  const card = e.target.closest('.card');
+  if (!card) return;
+  const ticker = card.dataset.ticker;
+  const stock = await fetchFullStockData(ticker);
+  showStockDetail(stock);
+});
+
+
 const top20Tickers = [
   'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA',
-  'NVDA', 'BRK.B', 'META', 'UNH', 'V',
+  'NVDA', 'BRK-B', 'META', 'UNH', 'V',
   'JPM', 'JNJ', 'MA', 'PG', 'HD',
   'ADBE', 'PYPL', 'XOM', 'KO', 'PFE'
 ];
@@ -89,7 +211,7 @@ const categoryTickers = {
     'SYK', 'BDX', 'IQV', 'BSX', 'ILMN'
   ],
   'Financials': [
-    'BRK.B', 'JPM', 'BAC', 'WFC', 'C',
+    'BRK-B', 'JPM', 'BAC', 'WFC', 'C',
     'GS', 'MS', 'AXP', 'USB', 'PNC',
     'TFC', 'BK', 'SCHW', 'BLK', 'PRU',
     'MET', 'AIG', 'MMC', 'ALL', 'CME'
@@ -145,15 +267,54 @@ const categoryTickers = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('▶ DOM fully loaded');
   const nav = document.querySelector('.categories-nav');
   const cardsGrid = document.querySelector('.cards-grid');
   const now = Date.now();
   const MS_PER_DAY = 1000 * 60 * 60 * 24;
+  const savedScroll = parseInt(localStorage.getItem('navScroll'), 10);
+  cardsGrid.addEventListener('click', async e => {
+    searchInput.value = '';
+  });
+  if (!isNaN(savedScroll)) {
+    nav.scrollLeft = savedScroll;
+  }
+
+  // helper to find a button by its category name
+  function findButtonByCategory(category) {
+    return Array.from(nav.querySelectorAll('button'))
+      .find(b => b.textContent === category);
+  }
+
+  // on scroll, remember scrollLeft
+  nav.addEventListener('scroll', () => {
+    localStorage.setItem('navScroll', nav.scrollLeft);
+    updateFade();
+  });
+
+  // Category buttons
+  nav.addEventListener('click', e => {
+    if (e.target.tagName !== 'BUTTON') return;
+    showCardsGrid();
+    const category = e.target.textContent;
+    // store which category we clicked
+    localStorage.setItem('selectedCategory', category);
+
+    nav.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+    e.target.classList.add('selected');
+    fetchAndDisplay(category);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // on load, pick the saved category (or default to “All”)
+  const savedCategory = localStorage.getItem('selectedCategory') || 'All';
+  const initialBtn = findButtonByCategory(savedCategory) || findButtonByCategory('All');
+  if (initialBtn) {
+    initialBtn.classList.add('selected');
+    fetchAndDisplay(initialBtn.textContent);
+  }
 
   // Fetch & render cards for a category
   async function fetchAndDisplay(category) {
-    console.log(`→ Fetching category: ${category}`);
     const tickers = categoryTickers[category] || [];
     if (!tickers.length) {
       cardsGrid.innerHTML = `<div class="card"><div class="card-content">No tickers found for “${category}.”</div></div>`;
@@ -183,7 +344,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const name12 = name11.replace(/\s* \(HC\)$/, '');
         const name13 = name12.replace(/\s* S.A.$/, '');
         const name14 = name13.replace(/,\s*$/, '');
-        const name = name14.replace(/-\s*$/, '');
+        const name15 = name14.replace(/-\s*$/, '');
+        const name16 = name15.replace(/\s*New$/, '');
+        const name = name16.replace(/\s*Incorporat$/, ' Inc.');
 
         let date = null;
         if (json.earnings_date) {
@@ -246,12 +409,13 @@ document.addEventListener('DOMContentLoaded', () => {
         ? item.expected_eps.toFixed(2)
         : 'TBD';
       const fmtDays = item.days_until != null
-        ? item.days_until
+        ? item.days_until - 7
         : '–';
       const fmtTPE = formatNumber(item.trailing_pe);
       const fmtBeta = formatNumber(item.beta);
       const fmtMarketCapStr = formatMarketCap(item.market_cap);
       const card = document.createElement('div');
+      card.dataset.ticker = item.ticker;
       // choose mode based on presence of raw_beat_pct
       if (typeof item.raw_beat_pct === 'number') {
         card.classList.add('card', 'mode-prediction');
@@ -314,6 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fg.classList.toggle('green', pctValue >= 50);
       } else {
         card.classList.add('card', 'mode-countdown');
+        const daysUnit = fmtDays === 1 ? 'day' : 'days';
         card.innerHTML = `
           <div class="card-content">
             <div class="header-row">
@@ -349,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="visual countdown">
               <div class="count">${fmtDays}</div>
-              <div class="days">days</div>
+              <div class="days">${daysUnit}</div>
               <div class="until">until prediction</div>
             </div>
           </div>
@@ -365,6 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nav.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
     e.target.classList.add('selected');
     fetchAndDisplay(e.target.textContent);
+    searchInput.value = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
@@ -377,6 +543,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (header && allButton) {
     header.addEventListener('click', () => {
       allButton.click();
+      showCardsGrid();
+      searchInput.value = '';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
@@ -409,7 +577,6 @@ document.addEventListener('DOMContentLoaded', () => {
     searchResults.querySelectorAll('.search-item').forEach(el => {
       el.addEventListener('click', () => {
         const ticker = el.dataset.ticker;
-        console.log('Clicked', ticker);
         searchResults.innerHTML = '';
         searchInput.value = ticker;
       });
@@ -454,6 +621,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // show the box if there are results, hide if empty
     searchResults.style.display = matches.length ? 'block' : 'none';
+    
+    searchResults.innerHTML = matches.map(item => `
+      <div class="search-item" data-ticker="${item.ticker}">
+        <div class="item-ticker"><strong>${item.ticker}</strong></div>
+        <div class="item-name">${item.name}</div>
+      </div>
+    `).join('');
+
+    searchResults.style.display = matches.length ? 'block' : 'none';
+
+    // now one handler that both sets the input AND navigates to detail
+    searchResults.querySelectorAll('.search-item').forEach(el => {
+      el.addEventListener('click', async () => {
+        const ticker = el.dataset.ticker;
+        // clear the dropdown
+        searchResults.innerHTML = '';
+        searchResults.style.display = 'none';
+        // set the input so user sees it
+        searchInput.value = ticker;
+        // fetch & show detail just like card clicks
+        const stock = await fetchFullStockData(ticker);
+        showStockDetail(stock);
+        searchInput.value = '';
+      });
+    });
   });
 
   // when you click or tab back into the input, rerun the filter

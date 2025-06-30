@@ -6,7 +6,7 @@ window.customLogos = {
   AMZN: 'https://companieslogo.com/img/orig/AMZN-e9f942e4.png?t=1740113564',
   TSLA: 'https://companieslogo.com/img/orig/TSLA-6da550e5.png?t=1740128273',
   NVDA: 'https://companieslogo.com/img/orig/NVDA-220e1e03.png?t=1722952498',
-  'BRK.B': 'https://companieslogo.com/img/orig/BRK-B-25f11589.png?t=1722006061',
+  'BRK-B': 'https://companieslogo.com/img/orig/BRK-B-25f11589.png?t=1722006061',
   META: 'https://companieslogo.com/img/orig/META-4767da84.png?t=1720244492',
   UNH: 'https://www.kinf.org/wp-content/uploads/2023/08/UHC_U-mark_blu_RGB-1.png',
   V: 'https://companieslogo.com/img/orig/V-05214186.png?t=1720244494',

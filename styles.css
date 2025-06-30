@@ -8,7 +8,7 @@ html, body {
   padding: 0;
   font-family: Arial, sans-serif;
   background-color: rgb(20, 20, 20);
-  color: #333;
+  color: rgb(10, 10, 10);
 }
 
 /* Fixed top bar with title, search, and categories */
@@ -94,6 +94,7 @@ input:focus {
 .categories-wrapper {
   position: relative;
   overflow: hidden;
+  margin-bottom: 10px;
 }
 .categories-wrapper .categories-nav {
   display: flex;
@@ -143,18 +144,21 @@ input:focus {
   cursor: pointer;
   white-space: nowrap;
   color: rgb(218, 218, 218);
+  background-color: rgb(45, 45, 47);
+  border: none;
+  border-radius: 10px;
+  margin: 0 clamp(6px, 1vw, 10px); 
+
 }
 
 .categories-nav button.selected {
   color: rgb(48, 148, 255);
 }
-
 .categories-nav button:first-child {
-  padding-left: 0;
+  margin-left: 0;
 }
-
 .categories-nav button:last-child {
-  padding-right: 0;
+  margin-right: 0;
 }
 
 /* Main content area shifts below fixed top-bar */
@@ -175,31 +179,33 @@ main {
   box-sizing: border-box;
   margin: 0;
   list-style: none;
-  margin-bottom: 8px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 .card {
-  background-color: rgb(10, 10, 10);
+  background-color: rgb(45, 45, 47);
   border-radius: 10px;
   box-shadow: 0  0 12px 2px rgba(45, 45, 47, 0.3);
-  height: 0;
-  padding-top: 56.25%;
+  height: auto;
+  padding-top: 0;
   position: relative;
   transition: transform 0.2s, background-color 0.2s;
   cursor: pointer;
 }
 
 .card:hover {
+  background-color: rgb(10, 10, 10);
+}
+.card:active {
   transform: translateY(-2px);
   background-color: rgb(45, 45, 47);
 }
 
 .card-content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: static;
+  width: auto;
+  height: auto;
   padding: 15px;
   box-sizing: border-box;
   overflow-y: hidden;
@@ -250,32 +256,33 @@ main {
 /* common .visual styles */
 .visual {
   position: absolute;
-  bottom: 16px;
-  right: 16px;
   align-items: center;
   justify-content: center;
 }
 /* gauge sizing */
 .visual.prediction {
-  flex-direction: column;
-  width: 125px;
-  height: 62.5px;
-  padding-bottom: 10px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 75px;
+  padding-bottom: 5px;
 
 }
 .visual.prediction .percent {
   position: absolute;
   left: 50%;
-  top: 75%;
+  top: 85%;
   transform: translate(-50%, -50%);
-  font-size: 1.25rem;
+  font-size: 1.65rem;
   pointer-events: none;
   color: rgb(218, 218, 218);
 }
 
 .gauge {
-  width: 125px;
-  height: 62.5px;
+  width: 150px;
+  height: 75px;
   overflow: visible;
   color: rgb(218, 218, 218);
 }
@@ -302,6 +309,7 @@ main {
   color: rgb(218, 218, 218);
   border-radius: 10px;
   padding: 12px 16px;
+  margin-top: 10px;
 }
 .visual.countdown .count {
   font-size: 2rem;
@@ -339,7 +347,30 @@ main {
 
 /* Keep extra breathing room below ticker */
 .card .details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-top: clamp(12px, 3vw, 20px);
+}
+.card .details .info {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgb(30, 30, 30);
+  padding: 4px 10px;
+  border-radius: 10px;
+  white-space: nowrap;
+  font-size: clamp(12px, calc(20px - 1vw), 16px);
+}
+.card .details .label {
+  font-weight: 600;
+  color: rgb(218, 218, 218);
+}
+.card .details .value {
+  color: rgb(190, 190, 190);
+}
+.card .details .info {
+  height: 32px;
 }
 
 .card-content .logo img {
@@ -369,7 +400,7 @@ main {
   max-height: 200px;
   overflow-y: auto;
   background: rgb(20, 20, 20);
-  border: 1px solid rgb(45, 45, 47);
+  border: 1px solid rgb(10, 10, 10);
   border-top: none;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -398,7 +429,7 @@ main {
 }
 
 .search-item:hover {
-  background: rgb(45, 45, 47);
+  background: rgb(10, 10, 10);
 }
 .search-container {
   width: clamp(200px, 40%, 60vw);
@@ -426,6 +457,215 @@ main {
 .details .info:last-child {
   margin-bottom: 0;
 }
+
+.content {
+  display: grid;
+  grid-template-areas: "slot";
+}
+.cards-grid  { grid-area: slot; }
+.search-stock { 
+  grid-area: slot;
+  display: none;
+}
+.content.show-search .cards-grid  {
+  display: none;
+}
+.content.show-search .search-stock {
+  display: block;
+}
+
+.search-stock {
+  /* match your main padding/margins */
+  max-width: 1500px;
+  margin: 0 auto 2rem;
+  padding: 0 clamp(30px, 5vw, 50px);
+  box-sizing: border-box;
+  color: rgb(218, 218, 218);
+  background-color: rgb(20, 20, 20);
+}
+
+/* Back button */
+.search-stock .back-btn {
+  background: none;
+  border: none;
+  color: rgb(218, 218, 218);
+  background-color: rgb(45, 45, 47);
+  border-radius: 10px;
+  font-size: clamp(10px, 2.5vw, 12px);
+  margin-top: 15px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  padding: clamp(12px, 2vw, 16px);
+}
+
+/* Header: logo + company + countdown */
+.search-stock .detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: clamp(10px, 2vw, 20px);
+  margin-bottom: 2rem;
+}
+
+.search-stock .company-info {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vw, 20px);
+}
+
+.search-stock .company-info .logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;;
+  background-color: rgb(218, 218, 218);
+  box-shadow: 0 0 3px rgba(218,218,218,0.3);
+  padding: 5px;
+  border-radius: 10px;
+}
+.search-stock .company-info .logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Company name + ticker */
+.search-stock h1 {
+  margin: 0;
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 700;
+  color: rgb(218, 218, 218);
+}
+.search-stock .ticker {
+  font-size: clamp(16px, 2.5vw, 20px);
+  color: rgb(190, 190, 190);
+  margin-left: 0.5rem;
+}
+
+/* Sector / Industry tags */
+.search-stock .tags {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+.search-stock .tag {
+  background: rgb(45, 45, 47);
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: clamp(12px, 2vw, 14px);
+  color: rgb(218, 218, 218);
+}
+
+/* Big countdown widget */
+.search-stock .countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgb(48, 148, 255);
+  border-radius: 10px;
+  padding: 20px;
+  min-width: 160px;
+  color: rgb(218, 218, 218);
+}
+.search-stock .days-number {
+  font-size: 3rem;
+  line-height: 1;
+  color: rgb(218, 218, 218);
+}
+.search-stock .days-label {
+  font-size: 1.5rem;
+  color: rgb(218, 218, 218);
+}
+.search-stock .days-sub {
+  font-size: 1rem;
+  color: rgb(218, 218, 218);
+}
+
+/* Metrics grid */
+.search-stock .metrics-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(16px, 2vw, 24px);
+  margin-bottom: 2rem;
+}
+.search-stock .metrics-grid div {
+  background: rgb(45, 45, 47);
+  padding: clamp(12px, 2vw, 16px);
+  border-radius: 8px;
+  font-size: clamp(14px, 2vw, 16px);
+  color: rgb(218, 218, 218);
+}
+.search-stock .metrics-grid > div {
+  flex: 0 1 auto;
+  white-space: nowrap;
+}
+.search-stock .metrics-grid .label {
+  font-weight: 600;
+  margin-right: 0.25rem;
+}
+
+/* Description box */
+.search-stock .description {
+  background: rgb(45, 45, 47);
+  padding: clamp(16px, 2.5vw, 24px);
+  border-radius: 8px;
+  line-height: 1.5;
+  font-size: clamp(14px, 2vw, 16px);
+  position: relative;
+}
+.search-stock .description p {
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+/* Read‐more toggle */
+.search-stock .toggle-btn {
+  background: none;
+  border: none;
+  color: rgb(48, 148, 255);
+  font-size: clamp(14px, 2vw, 16px);
+  margin-top: 0.75rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Ensure the slot CSS remains at the very end so detail overrides grid */
+.content {
+  display: grid;
+  grid-template-areas: "slot";
+}
+.cards-grid  { grid-area: slot; }
+.search-stock { grid-area: slot; display: none; }
+.content.show-search .cards-grid  { display: none; }
+.content.show-search .search-stock { display: block; }
+
+
+.card .visual {
+  position: static;
+  z-index: 2;
+}
+.card .details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.card .details .info {
+  display: inline-flex !important;
+}
+.card.mode-prediction .visual.prediction {
+  position: static;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem auto 0;
+}
+.card.mode-countdown .visual.countdown {
+  display: flex;
+  width: fit-content;
+  margin: 1rem auto 0;
+}
+
 
 /* One card per row on small screens */
 @media (max-width: 600px) {
