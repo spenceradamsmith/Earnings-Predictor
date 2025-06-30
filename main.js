@@ -80,7 +80,8 @@ function renderStockDetail(stock) {
   const sentences = stock.description.split(/(?<=\.)\s+/);
   const first4 = sentences.slice(0,4).join(' ');
   const rest = sentences.slice().join(' ');
-
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  
   return `
     <button class="back-btn">&larr; Back to all stocks</button>
 
