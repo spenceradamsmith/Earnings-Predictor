@@ -10508,243 +10508,243 @@ window.searchStocks = [
     "name": "Zymeworks Inc."
   },
   {
-    "ticker": "HSBA-L",
+    "ticker": "HSBA.L",
     "name": "HSBC Holdings"
   },
   {
-    "ticker": "BP-L",
+    "ticker": "BP.L",
     "name": "BP plc"
   },
   {
-    "ticker": "GSK-L",
+    "ticker": "GSK.L",
     "name": "GlaxoSmithKline"
   },
   {
-    "ticker": "AZN-L",
+    "ticker": "AZN.L",
     "name": "AstraZeneca"
   },
   {
-    "ticker": "RIO-L",
+    "ticker": "RIO.L",
     "name": "Rio Tinto"
   },
   {
-    "ticker": "VOD-L",
+    "ticker": "VOD.L",
     "name": "Vodafone Group"
   },
   {
-    "ticker": "LLOY-L",
+    "ticker": "LLOY.L",
     "name": "Lloyds Banking Group"
   },
   {
-    "ticker": "DGE-L",
+    "ticker": "DGE.L",
     "name": "Diageo"
   },
   {
-    "ticker": "BARC-L",
+    "ticker": "BARC.L",
     "name": "Barclays"
   },
   {
-    "ticker": "ULVR-L",
+    "ticker": "ULVR.L",
     "name": "Unilever"
   },
   {
-    "ticker": "RY-TO",
+    "ticker": "RY.TO",
     "name": "Royal Bank of Canada"
   },
   {
-    "ticker": "TD-TO",
+    "ticker": "TD.TO",
     "name": "Toronto-Dominion Bank"
   },
   {
-    "ticker": "BNS-TO",
+    "ticker": "BNS.TO",
     "name": "Bank of Nova Scotia"
   },
   {
-    "ticker": "ENB-TO",
+    "ticker": "ENB.TO",
     "name": "Enbridge"
   },
   {
-    "ticker": "CNQ-TO",
+    "ticker": "CNQ.TO",
     "name": "Canadian Natural Resources"
   },
   {
-    "ticker": "BCE-TO",
+    "ticker": "BCE.TO",
     "name": "BCE Inc."
   },
   {
-    "ticker": "SHOP-TO",
+    "ticker": "SHOP.TO",
     "name": "Shopify"
   },
   {
-    "ticker": "TRP-TO",
+    "ticker": "TRP.TO",
     "name": "TC Energy"
   },
   {
-    "ticker": "CNR-TO",
+    "ticker": "CNR.TO",
     "name": "Canadian National Railway"
   },
   {
-    "ticker": "ABX-TO",
+    "ticker": "ABX.TO",
     "name": "Barrick Gold"
   },
   {
-    "ticker": "0700-HK",
+    "ticker": "0700.HK",
     "name": "Tencent Holdings"
   },
   {
-    "ticker": "0941-HK",
+    "ticker": "0941.HK",
     "name": "China Mobile"
   },
   {
-    "ticker": "1299-HK",
+    "ticker": "1299.HK",
     "name": "AIA Group"
   },
   {
-    "ticker": "0883-HK",
+    "ticker": "0883.HK",
     "name": "CNOOC"
   },
   {
-    "ticker": "0005-HK",
+    "ticker": "0005.HK",
     "name": "HSBC Holdings"
   },
   {
-    "ticker": "3988-HK",
+    "ticker": "3988.HK",
     "name": "Bank of China"
   },
   {
-    "ticker": "0388-HK",
+    "ticker": "0388.HK",
     "name": "Hong Kong Exchanges"
   },
   {
-    "ticker": "0939-HK",
+    "ticker": "0939.HK",
     "name": "China Construction Bank"
   },
   {
-    "ticker": "0762-HK",
+    "ticker": "0762.HK",
     "name": "China Unicom"
   },
   {
-    "ticker": "0001-HK",
+    "ticker": "0001.HK",
     "name": "CK Hutchison"
   },
   {
-    "ticker": "CBA-AX",
+    "ticker": "CBA.AX",
     "name": "Commonwealth Bank of Australia"
   },
   {
-    "ticker": "BHP-AX",
+    "ticker": "BHP.AX",
     "name": "BHP Group"
   },
   {
-    "ticker": "ANZ-AX",
+    "ticker": "ANZ.AX",
     "name": "ANZ Banking Group"
   },
   {
-    "ticker": "NAB-AX",
+    "ticker": "NAB.AX",
     "name": "National Australia Bank"
   },
   {
-    "ticker": "WES-AX",
+    "ticker": "WES.AX",
     "name": "Wesfarmers"
   },
   {
-    "ticker": "WOW-AX",
+    "ticker": "WOW.AX",
     "name": "Woolworths"
   },
   {
-    "ticker": "CSL-AX",
+    "ticker": "CSL.AX",
     "name": "CSL Limited"
   },
   {
-    "ticker": "WBC-AX",
+    "ticker": "WBC.AX",
     "name": "Westpac Banking Corporation"
   },
   {
-    "ticker": "MQG-AX",
+    "ticker": "MQG.AX",
     "name": "Macquarie Group"
   },
   {
-    "ticker": "TLS-AX",
+    "ticker": "TLS.AX",
     "name": "Telstra Corporation"
   },
   {
-    "ticker": "RELIANCE-NS",
+    "ticker": "RELIANCE.NS",
     "name": "Reliance Industries"
   },
   {
-    "ticker": "TCS-NS",
+    "ticker": "TCS.NS",
     "name": "Tata Consultancy Services"
   },
   {
-    "ticker": "HDFC-NS",
+    "ticker": "HDFC.NS",
     "name": "HDFC Bank"
   },
   {
-    "ticker": "INFY-NS",
+    "ticker": "INFY.NS",
     "name": "Infosys"
   },
   {
-    "ticker": "HDFCBANK-NS",
+    "ticker": "HDFCBANK.NS",
     "name": "HDFC Bank"
   },
   {
-    "ticker": "ICICIBANK-NS",
+    "ticker": "ICICIBANK.NS",
     "name": "ICICI Bank"
   },
   {
-    "ticker": "ITC-NS",
+    "ticker": "ITC.NS",
     "name": "ITC Ltd"
   },
   {
-    "ticker": "LT-NS",
+    "ticker": "LT.NS",
     "name": "Larsen & Toubro"
   },
   {
-    "ticker": "SBIN-NS",
+    "ticker": "SBIN.NS",
     "name": "State Bank of India"
   },
   {
-    "ticker": "AXISBANK-NS",
+    "ticker": "AXISBANK.NS",
     "name": "Axis Bank"
   },
   {
-    "ticker": "ADS-DE",
+    "ticker": "ADS.DE",
     "name": "Adidas"
   },
   {
-    "ticker": "ALV-DE",
+    "ticker": "ALV.DE",
     "name": "Allianz"
   },
   {
-    "ticker": "BAS-DE",
+    "ticker": "BAS.DE",
     "name": "BASF"
   },
   {
-    "ticker": "BMW-DE",
+    "ticker": "BMW.DE",
     "name": "BMW"
   },
   {
-    "ticker": "DAI-DE",
+    "ticker": "DAI.DE",
     "name": "Daimler"
   },
   {
-    "ticker": "DBK-DE",
+    "ticker": "DBK.DE",
     "name": "Deutsche Bank"
   },
   {
-    "ticker": "DTE-DE",
+    "ticker": "DTE.DE",
     "name": "Deutsche Telekom"
   },
   {
-    "ticker": "EOAN-DE",
+    "ticker": "EOAN.DE",
     "name": "E.ON"
   },
   {
-    "ticker": "SAP-DE",
+    "ticker": "SAP.DE",
     "name": "SAP"
   },
   {
-    "ticker": "VOW3-DE",
+    "ticker": "VOW3.DE",
     "name": "Volkswagen"
   }
 ];

@@ -299,7 +299,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchFullStockData(stored)
       .then(showStockDetail)
       .catch(console.error);
-    return;
   }
   const cardsGrid = document.querySelector('.cards-grid');
   const now = Date.now();
