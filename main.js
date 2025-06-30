@@ -81,7 +81,7 @@ function renderStockDetail(stock) {
   const first4 = sentences.slice(0,4).join(' ');
   const rest = sentences.slice().join(' ');
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  
+
   return `
     <button class="back-btn">&larr; Back to all stocks</button>
 
@@ -426,45 +426,47 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="card-content">
             <div class="header-row">
               <div class="logo">
-                <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
+          <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
               </div>
               <div class="header">
-                <h2 class="company">${item.name}</h2>
-                <span class="ticker">${item.ticker}</span>
+          <h2 class="company">${item.name}</h2>
+          <span class="ticker">${item.ticker}</span>
               </div>
             </div>
-            <div class="details">
-              <div class="info">
-                <span class="label">Next Earnings:</span>
-                <span class="value">${formatEarningsDate(fmtDate)}</span>
+            <div class="information">
+              <div class="details">
+          <div class="info">
+            <span class="label">Next Earnings:</span>
+            <span class="value">${formatEarningsDate(fmtDate)}</span>
+          </div>
+          <div class="info">
+            <span class="label">Expected EPS:</span>
+            <span class="value">${fmtESP}</span>
+          </div>
+          <div class="info">
+            <span class="label">Trailing P/E:</span>
+            <span class="value">${fmtTPE}</span>
+          </div>
+          <div class="info">
+            <span class="label">Beta:</span>
+            <span class="value">${fmtBeta}</span>
+          </div>
+          <div class="info">
+            <span class="label">Market Cap:</span>
+            <span class="value">${fmtMarketCapStr}</span>
+          </div>
               </div>
-              <div class="info">
-                <span class="label">Expected EPS:</span>
-                <span class="value">${fmtESP}</span>
+              <div class="visual prediction">
+          <svg class="gauge" viewBox="0 0 100 50">
+            <path class="bg"
+              d="M10,50 A40,40 0 0,1 90,50"
+              fill="none"/>
+            <path class="fg"
+              d="M10,50 A40,40 0 0,1 90,50"
+              fill="none"/>
+          </svg>
+          <div class="percent">${(item.raw_beat_pct).toFixed(1)}%</div>
               </div>
-              <div class="info">
-                <span class="label">Trailing P/E:</span>
-                <span class="value">${fmtTPE}</span>
-              </div>
-              <div class="info">
-                <span class="label">Beta:</span>
-                <span class="value">${fmtBeta}</span>
-              </div>
-              <div class="info">
-                <span class="label">Market Cap:</span>
-                <span class="value">${fmtMarketCapStr}</span>
-              </div>
-            </div>
-            <div class="visual prediction">
-              <svg class="gauge" viewBox="0 0 100 50">
-                <path class="bg"
-                  d="M10,50 A40,40 0 0,1 90,50"
-                  fill="none"/>
-                <path class="fg"
-                d="M10,50 A40,40 0 0,1 90,50"
-                fill="none"/>
-              </svg>
-              <div class="percent">${(item.raw_beat_pct).toFixed(1)}%</div>
             </div>
           </div>
         `;
@@ -484,39 +486,41 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="card-content">
             <div class="header-row">
               <div class="logo">
-                <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
+          <img src="${getLogoSrc(item.ticker, item.logo)}" alt="${item.name} logo"/>
               </div>
               <div class="header">
-                <h2 class="company">${item.name}</h2>
-                <span class="ticker">${item.ticker}</span>
+          <h2 class="company">${item.name}</h2>
+          <span class="ticker">${item.ticker}</span>
               </div>
             </div>
-            <div class="details">
-              <div class="info">
-                <span class="label">Next Earnings:</span>
-                <span class="value">${formatEarningsDate(fmtDate)}</span>
+            <div class="information">
+              <div class="details">
+          <div class="info">
+            <span class="label">Next Earnings:</span>
+            <span class="value">${formatEarningsDate(fmtDate)}</span>
+          </div>
+          <div class="info">
+            <span class="label">Expected EPS:</span>
+            <span class="value">${fmtESP}</span>
+          </div>
+          <div class="info">
+            <span class="label">Trailing P/E:</span>
+            <span class="value">${fmtTPE}</span>
+          </div>
+          <div class="info">
+            <span class="label">Beta:</span>
+            <span class="value">${fmtBeta}</span>
+          </div>
+          <div class="info">
+            <span class="label">Market Cap:</span>
+            <span class="value">${fmtMarketCapStr}</span>
+          </div>
               </div>
-              <div class="info">
-                <span class="label">Expected EPS:</span>
-                <span class="value">${fmtESP}</span>
+              <div class="visual countdown">
+          <div class="count">${fmtDays}</div>
+          <div class="days">${daysUnit}</div>
+          <div class="until">until prediction</div>
               </div>
-              <div class="info">
-                <span class="label">Trailing P/E:</span>
-                <span class="value">${fmtTPE}</span>
-              </div>
-              <div class="info">
-                <span class="label">Beta:</span>
-                <span class="value">${fmtBeta}</span>
-              </div>
-              <div class="info">
-                <span class="label">Market Cap:</span>
-                <span class="value">${fmtMarketCapStr}</span>
-              </div>
-            </div>
-            <div class="visual countdown">
-              <div class="count">${fmtDays}</div>
-              <div class="days">${daysUnit}</div>
-              <div class="until">until prediction</div>
             </div>
           </div>
         `;
@@ -547,6 +551,9 @@ document.addEventListener('DOMContentLoaded', () => {
       showCardsGrid();
       searchInput.value = '';
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      localStorage.removeItem('navScroll');
+      nav.scrollTo({ left: 0, behavior: 'smooth' });
+      setTimeout(updateFade, 400);
     });
   }
 

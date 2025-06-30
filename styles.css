@@ -152,7 +152,7 @@ input:focus {
 }
 
 .categories-nav button.selected {
-  color: rgb(48, 148, 255);
+  background-color: rgb(48, 148, 255);
 }
 .categories-nav button:first-child {
   margin-left: 0;
@@ -212,8 +212,7 @@ main {
   overscroll-behavior: contain;
   display: block;
 }
-.iformation {
-  display: grid;
+.information {
   display: grid;
   grid-template-columns: 1fr auto;
   grid-template-rows: auto 1fr;
@@ -280,39 +279,38 @@ main {
   position: relative;
   align-items: center;
   justify-content: center;
-  width: 150px;
-  height: 75px;
-
+  width: 110px;
+  height: 55px;
 }
 .visual.prediction .percent {
   position: absolute;
   left: 50%;
-  top: 85%;
+  top: 87%;
   transform: translate(-50%, -50%);
-  font-size: 1.65rem;
+  font-size: 1.25rem;
   pointer-events: none;
   color: rgb(218, 218, 218);
 }
 
 .gauge {
-  width: 150px;
-  height: 75px;
+  width: 110px;
+  height: 55px;
   overflow: visible;
   color: rgb(218, 218, 218);
 }
 .gauge .bg {
   stroke: rgb(218, 218, 218);
-  stroke-width: 6;
+  stroke-width: 7;
   stroke-linecap: round;
 }
 .gauge .fg.green {
   stroke: #10b981;
-  stroke-width: 6;
+  stroke-width: 7;
   stroke-linecap: round;
 }
 .gauge .fg.red {
   stroke: #ef4444;
-  stroke-width: 6;
+  stroke-width: 7;
   stroke-linecap: round;
 }
 
@@ -333,6 +331,7 @@ main {
 .visual.countdown .until {
   font-size: 0.8rem;
   color: rgb(218, 218, 218);
+  white-space: nowrap;
 }
 .visual.countdown .days {
   font-size: 1.2rem;
@@ -654,10 +653,7 @@ main {
 .content.show-search .search-stock { display: block; }
 
 
-.card .visual {
-  position: static;
-  z-index: 2;
-}
+
 .card .details {
   grid-area: details;
   display: flex;
@@ -668,7 +664,7 @@ main {
   display: inline-flex !important;
 }
 .card.mode-prediction .visual.prediction {
-  position: static;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -685,5 +681,20 @@ main {
 @media (max-width: 600px) {
   .cards-grid {
     grid-template-columns: 1fr;
+  }
+  .search-box input::placeholder {
+    font-size: 12px;
+  }
+  .information {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "details"
+      "visual";
+    gap: 10px;
+  }
+  .card.mode-prediction .visual.prediction {
+    margin-bottom: 1.5rem;
   }
 }
