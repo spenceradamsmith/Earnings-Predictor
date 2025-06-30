@@ -9,6 +9,18 @@ function showCardsGrid() {
   const content = document.querySelector('.content');
   content.classList.remove('show-search');
 }
+function makeClickableLink(website) {
+  if (!website) {
+    return 'No website available';
+  }
+  const display = "View Website";
+  return `<a
+            href="${website}"
+            class="link-button"
+            target="_blank"
+            rel="noopener noreferrer"
+          >${display}</a>`;
+}
 
 // Add fade effect to categories navigation
 const nav = document.querySelector('.categories-nav');
@@ -80,6 +92,7 @@ function renderStockDetail(stock) {
   const sentences = stock.description.split(/(?<=\.)\s+/);
   const first4 = sentences.slice(0,4).join(' ');
   const rest = sentences.slice().join(' ');
+  website = stock.website
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return `
@@ -122,6 +135,9 @@ function renderStockDetail(stock) {
 
     <div class="description">
       <p>
+        ${makeClickableLink(website)}
+      </p>
+      <p>
         ${first4}
         <span id="more-text" style="display:none;"> ${rest}</span>
       </p>
@@ -149,6 +165,8 @@ function attachDetailListeners() {
     searchInput.value = '';
     searchResults.innerHTML = '';
     searchResults.style.display = 'none';
+    window.history.replaceState(null, '', window.location.pathname);
+    window.localStorage.removeItem('lastStock');
   });
 }
 
@@ -161,6 +179,7 @@ async function fetchFullStockData(ticker) {
     ticker,
     name:             json.company_name,
     logo:             json.logo,
+    website:          json.website,
     sector:           json.sector,
     industry:         json.industry,
     description:      json.description,
@@ -179,6 +198,9 @@ function showStockDetail(stock) {
   container.innerHTML = renderStockDetail(stock);
   document.querySelector('.content').classList.add('show-search');
   attachDetailListeners();
+  window.history.replaceState(null, '', `#stock=${stock.ticker}`);
+  window.localStorage.setItem('lastStock', stock.ticker);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 cardsGrid.addEventListener('click', async e => {
@@ -269,6 +291,16 @@ const categoryTickers = {
 
 document.addEventListener('DOMContentLoaded', () => {
   const nav = document.querySelector('.categories-nav');
+  const allBtn = Array.from(nav.querySelectorAll('button')).find(b => b.textContent === 'All');
+   const stored = window.localStorage.getItem('lastStock');
+  if (stored) {
+    nav.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+    allBtn && allBtn.classList.add('selected');
+    fetchFullStockData(stored)
+      .then(showStockDetail)
+      .catch(console.error);
+    return;
+  }
   const cardsGrid = document.querySelector('.cards-grid');
   const now = Date.now();
   const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -295,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Category buttons
   nav.addEventListener('click', e => {
     if (e.target.tagName !== 'BUTTON') return;
+    cardsGrid.innerHTML = '';
     showCardsGrid();
     const category = e.target.textContent;
     // store which category we clicked
@@ -313,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initialBtn.classList.add('selected');
     fetchAndDisplay(initialBtn.textContent);
   }
-
   // Fetch & render cards for a category
   async function fetchAndDisplay(category) {
     const tickers = categoryTickers[category] || [];
@@ -444,14 +476,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="value">${fmtESP}</span>
           </div>
           <div class="info">
-            <span class="label">Trailing P/E:</span>
-            <span class="value">${fmtTPE}</span>
-          </div>
-          <div class="info">
-            <span class="label">Beta:</span>
-            <span class="value">${fmtBeta}</span>
-          </div>
-          <div class="info">
             <span class="label">Market Cap:</span>
             <span class="value">${fmtMarketCapStr}</span>
           </div>
@@ -502,14 +526,6 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="info">
             <span class="label">Expected EPS:</span>
             <span class="value">${fmtESP}</span>
-          </div>
-          <div class="info">
-            <span class="label">Trailing P/E:</span>
-            <span class="value">${fmtTPE}</span>
-          </div>
-          <div class="info">
-            <span class="label">Beta:</span>
-            <span class="value">${fmtBeta}</span>
           </div>
           <div class="info">
             <span class="label">Market Cap:</span>

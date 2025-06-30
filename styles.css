@@ -11,6 +11,25 @@ html, body {
   color: rgb(10, 10, 10);
 }
 
+.link-button,
+.link-button:visited {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background-color: rgb(48, 148, 255);
+  color: rgb(218, 218, 218) !important;
+  text-decoration: none !important;
+  font: inherit;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.link-button:hover {
+  background-color: rgb(20, 20, 20);
+}
+.link-button:active {
+  background-color: rgb(48, 148, 255);
+}
+
 /* Fixed top bar with title, search, and categories */
 .top-bar {
   position: fixed;
@@ -412,7 +431,7 @@ main {
   max-height: 200px;
   overflow-y: auto;
   background: rgb(20, 20, 20);
-  border: 1px solid rgb(10, 10, 10);
+  border: 2px solid rgb(45, 45, 47);
   border-top: none;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -426,7 +445,7 @@ main {
   width: 6px;
 }
 .search-results::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.2);
+  background-color: rgb(48, 148, 255);
   border-radius: 3px;
 }
 
@@ -435,11 +454,14 @@ main {
   cursor: pointer;
   font-size: clamp(12px, 2.5vw, 16px);
   color: rgb(218, 218, 218);
+  border-bottom: 2px solid rgb(45, 45, 47);
+}
+.search-item:last-child {
+  border-bottom: none;
 }
 .search-item .item-name {
   color: rgb(190, 190, 190);
 }
-
 .search-item:hover {
   background: rgb(10, 10, 10);
 }
@@ -508,6 +530,12 @@ main {
   margin-bottom: 1rem;
   cursor: pointer;
   padding: clamp(12px, 2vw, 16px);
+}
+.search-stocks .back-btn:hover {
+  background-color: rgb(48, 148, 255);
+}
+.search-stocks .back-btn:active {
+  background-color: rgb(20, 20, 20);
 }
 
 /* Header: logo + company + countdown */
