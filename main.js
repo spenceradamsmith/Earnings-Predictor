@@ -401,19 +401,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // parse name and date
         const name = json.company_name || '';
 
+        // Get earnings date and filter out future dates
         let date = null;
-
-        // Get rid of any old earnings dates
-        if (json.days_until != null && !isNaN(json.days_until)) {
+        if (json.days_until != null && json.days_until >= 0) {
           date = new Date(now + json.days_until * MS_PER_DAY);
         } else if (json.earnings_date) {
-          const parsed = new Date(json.earnings_date);
-          if (!isNaN(parsed.getTime())) {
-            date = parsed;
-          }
+          const d = new Date(json.earnings_date);
+          if (!isNaN(d.getTime())) date = d;
         }
-        if (date && date.getTime() < now && (json.days_until == null || isNaN(json.days_until))) {
-          date = null;
+
+        let expectedEps = null;
+        if (json.expected_eps != null) {
+          const epsNum = Number(json.expected_eps);
+          expectedEps = isNaN(epsNum) ? null : epsNum;
         }
 
         // compute days until for countdown
