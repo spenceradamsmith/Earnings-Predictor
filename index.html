@@ -47,4 +47,12 @@
     <script src="searchStocks.js"></script>
     <script src="main.js"></script>
 </body>
+<footer class="footer">
+    <div class="footer-content">
+        <p>&copy; <span id="currentYear"></span> Earnings Predictor. All rights reserved.</p>
+        <script>
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+        </script>
+        <p>Created by Spencer Smith</p>
+    </div>
 </html>
