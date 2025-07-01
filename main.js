@@ -402,18 +402,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = json.company_name || '';
 
         let date = null;
-        if (json.earnings_date) {
-          const d = new Date(json.earnings_date);
-          date = isNaN(d.getTime()) ? null : d;
-        } else if (json.days_until != null && !isNaN(json.days_until)) {
+
+        // 1) If we have a future days_until, always use that
+        if (json.days_until != null && !isNaN(json.days_until)) {
           date = new Date(now + json.days_until * MS_PER_DAY);
+        } else if (json.earnings_date) {
+          const parsed = new Date(json.earnings_date);
+          if (!isNaN(parsed.getTime())) {
+            date = parsed;
+          }
         }
 
-        let expectedEps = null;
-        if (json.expected_eps != null) {
-          const epsNum = Number(json.expected_eps);
-          expectedEps = isNaN(epsNum) ? null : epsNum;
-        }
+// 3) If that date has already passed, and we _don’t_ have a days_until, treat as “no date”
+if (date && date.getTime() < now && (json.days_until == null || isNaN(json.days_until))) {
+  date = null;
+}
 
         // compute days until for countdown
         let daysUntil = null;
