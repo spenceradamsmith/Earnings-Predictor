@@ -74,7 +74,7 @@ window.customLogos = {
   MET: 'https://companieslogo.com/img/orig/MET-d9ef9e6b.png?t=1720244492',
   AIG: 'https://companieslogo.com/img/orig/AIG-6157ce34.png?t=1720244490',
   MMC: 'https://companieslogo.com/img/orig/MMC-4611aee0.png?t=1720244492',
-  ALL: 'https://i.pinimg.com/736x/f1/f5/a3/f1f5a355f169c6d59de205c335bef394.jpg',
+  ALL: 'https://cdn.freebiesupply.com/logos/large/2x/allstate-logo-symbol.svg',
   CME: 'https://companieslogo.com/img/orig/CME-ce2f32ad.png?t=1720244491',
 
   // Consumer Discretionary

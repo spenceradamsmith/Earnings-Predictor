@@ -398,24 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const json = await res.json();
 
         // parse name and date
-        const rawName = json.company_name || '';
-        const name1 = rawName.replace(/\s*\(The\)$/, '');
-        const name2 = name1.replace(/\s*\(T$/, '');
-        const name3 = name2.replace(/\s*Packaging Corporation of Americ$/, 'Packaging Corporation of America');
-        const name4 = name3.replace(/,\s*Inc(?!\.)\b/, ', Inc.');
-        const name5 = name4.replace(/\s* \(Holdi$/, '');
-        const name6 = name5.replace(/\s* \(D\/B\/A\)$/, '');
-        const name7 = name6.replace(/\s* \(Holdin$/, '');
-        const name8 = name7.replace(/\bDBA\b\s*/gi, '');
-        const name9 = name8.replace(/\s*(?:\(?REIT\)?\s*)$/i, '');
-        const name10 = name9.replace(/\s* \(REI$/, '');
-        const name11 = name10.replace(/\s* \(Del$/, '');
-        const name12 = name11.replace(/\s* \(HC\)$/, '');
-        const name13 = name12.replace(/\s* S.A.$/, '');
-        const name14 = name13.replace(/,\s*$/, '');
-        const name15 = name14.replace(/-\s*$/, '');
-        const name16 = name15.replace(/\s*New$/, '');
-        const name = name16.replace(/\s*Incorporat$/, ' Inc.');
+        const name = json.company_name || '';
 
         let date = null;
         if (json.earnings_date) {
