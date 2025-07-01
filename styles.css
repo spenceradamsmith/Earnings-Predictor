@@ -199,7 +199,7 @@ main {
   margin: 0;
   list-style: none;
   margin-top: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .card {
@@ -749,6 +749,13 @@ main {
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 2rem;
+}
+.footer {
+  font-size: 0.9rem;
+  color: rgb(190, 190, 190);
+  max-width: 1500px;
+  padding: 0 clamp(30px, 5vw, 50px);
+  box-sizing: border-box;   
 }
 
 /* One card per row on small screens */
