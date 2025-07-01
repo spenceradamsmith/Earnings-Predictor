@@ -16,15 +16,15 @@ CORS(app)
 def health_check():
     return jsonify({"status": "ok"}), 200
 
+# Load pre-trained model
+model = CatBoostClassifier()
+model.load_model("catboost_model.cbm")
+
 @app.route("/predict")
 def predict():
     # Get ticker parameter
     ticker_param = request.args.get("ticker")
     ticker = ticker_param.upper() if ticker_param else "NKE"
-
-    # Load pre-trained model
-    model = CatBoostClassifier()
-    model.load_model("catboost_model.cbm")
 
     # Fetch stock info
     stock = yf.Ticker(ticker)
