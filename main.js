@@ -246,10 +246,15 @@ cardsGrid.addEventListener('click', async e => {
   const card = e.target.closest('.card');
   if (!card) return;
   const ticker = card.dataset.ticker;
+  let _origFooterHTML = null;
+    if (_origFooterHTML === null) {
+      _origFooterHTML = footer.innerHTML;
+    }
+  footer.textContent = `Loading...`;
   const stock = await fetchFullStockData(ticker);
   showStockDetail(stock);
+  footer.innerHTML = _origFooterHTML;
 });
-
 
 const top20Tickers = [
   'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA',
@@ -393,11 +398,12 @@ document.addEventListener('DOMContentLoaded', () => {
       cardsGrid.innerHTML = `<div class="card"><div class="card-content">No tickers found for “${category}.”</div></div>`;
       return;
     }
-    footer = document.querySelector('.footer');
+    const footer = document.querySelector('.footer');
+    let _origFooterHTML = null;
     if (_origFooterHTML === null) {
       _origFooterHTML = footer.innerHTML;
     }
-    footer.textContent = `Loading ${category} tickers...`;
+    footer.textContent = `Loading...`;
     // parallel-fetch all tickers
     const responses = await Promise.all(tickers.map(async ticker => {
       try {
