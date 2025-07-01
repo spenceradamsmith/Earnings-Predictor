@@ -364,7 +364,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Category buttons
   nav.addEventListener('click', e => {
-    if (e.target.tagName !== 'BUTTON') return;
+    if (e.target.tagName !== 'BUTTON') {
+      return;
+    }
     cardsGrid.innerHTML = '';
     showCardsGrid();
     const category = e.target.textContent;
@@ -391,7 +393,11 @@ document.addEventListener('DOMContentLoaded', () => {
       cardsGrid.innerHTML = `<div class="card"><div class="card-content">No tickers found for “${category}.”</div></div>`;
       return;
     }
-
+    footer = document.querySelector('.footer');
+    if (_origFooterHTML === null) {
+      _origFooterHTML = footer.innerHTML;
+    }
+    footer.textContent = `Loading ${category} tickers...`;
     // parallel-fetch all tickers
     const responses = await Promise.all(tickers.map(async ticker => {
       try {
@@ -442,6 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return { ticker, name: ticker, logo: null, date: null, expected_eps: null, days_until: null, raw_beat_pct: null };
       }
     }));
+    footer.innerHTML = _origFooterHTML;
 
     // filter out nulls, sort by proximity
     const items = responses
