@@ -232,8 +232,9 @@ function showStockDetail(stock) {
     const length = fg.getTotalLength();
     fg.style.strokeDasharray  = length;
     fg.style.strokeDashoffset = length * (1 - stock.raw_beat_pct / 100);
-    fg.classList.toggle('green', stock.raw_beat_pct >= 50);
-    fg.classList.toggle('red',   stock.raw_beat_pct <  50);
+    fg.classList.toggle('red', pctValue < 40);
+    fg.classList.toggle('yellow', pctValue >= 40 && pctValue < 60);
+    fg.classList.toggle('green', pctValue >= 60);
   }
   window.history.replaceState(null, '', `#stock=${stock.ticker}`);
   window.localStorage.setItem('lastStock', stock.ticker);
@@ -520,8 +521,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const pctValue = item.raw_beat_pct;
         const pctFraction = pctValue / 100;
         fg.style.strokeDashoffset = length * (1 - pctFraction);
-        fg.classList.toggle('red', pctValue < 50);
-        fg.classList.toggle('green', pctValue >= 50);
+        fg.classList.toggle('red', pctValue < 40);
+        fg.classList.toggle('yellow', pctValue >= 40 && pctValue < 60);
+        fg.classList.toggle('green', pctValue >= 60);
       } else {
         card.classList.add('card', 'mode-countdown');
         const daysUnit = fmtDays === 1 ? 'day' : 'days';

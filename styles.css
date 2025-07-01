@@ -334,6 +334,11 @@ main {
   stroke-width: 7;
   stroke-linecap: round;
 }
+.gauge .fg.yellow {
+  stroke: #facc15;
+  stroke-width: 7;
+  stroke-linecap: round;
+}
 .gauge .fg.red {
   stroke: #ef4444;
   stroke-width: 7;
@@ -765,5 +770,14 @@ main {
   }
   .card.mode-prediction .visual.prediction {
     margin-bottom: 1.5rem;
+  }
+  .search-stock .detail-header {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+  }
+  .search-stock .detail-header .visual {
+    margin-top: 1rem;
   }
 }
