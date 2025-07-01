@@ -230,6 +230,7 @@ function showStockDetail(stock) {
   if (typeof stock.raw_beat_pct === 'number') {
     const fg = container.querySelector('.gauge .fg');
     const length = fg.getTotalLength();
+    const pctValue = stock.raw_beat_pct;
     fg.style.strokeDasharray  = length;
     fg.style.strokeDashoffset = length * (1 - stock.raw_beat_pct / 100);
     fg.classList.toggle('red', pctValue < 40);
