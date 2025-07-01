@@ -302,22 +302,25 @@ main {
   position: relative;
   align-items: center;
   justify-content: center;
-  width: 115px;
-  height: 57.5px;
+  width: 95px;
+  height: 47.5px;
+  background-color: rgb(48, 148, 255);
+  border-radius: 10px;
+  padding: 12px 8px 24px;
 }
 .visual.prediction .percent {
   position: absolute;
   left: 50%;
-  top: 87%;
+  top: 65%;
   transform: translate(-50%, -50%);
-  font-size: 1.25rem;
+  font-size: 1.175rem;
   pointer-events: none;
   color: rgb(218, 218, 218);
 }
 
 .gauge {
-  width: 115px;
-  height: 57.5px;
+  width: 95px;
+  height: 47.5px;
   overflow: visible;
   color: rgb(218, 218, 218);
 }
@@ -674,7 +677,6 @@ main {
   padding: 0;
 }
 
-/* Ensure the slot CSS remains at the very end so detail overrides grid */
 .content {
   display: grid;
   grid-template-areas: "slot";
@@ -683,8 +685,6 @@ main {
 .search-stock { grid-area: slot; display: none; }
 .content.show-search .cards-grid  { display: none; }
 .content.show-search .search-stock { display: block; }
-
-
 
 .card .details {
   grid-area: details;
@@ -707,7 +707,44 @@ main {
   width: fit-content;
   margin: 1rem auto 0;
 }
+.percent {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  color: rgb(218, 218, 218);
+  font-weight: 600;
+}
+/* ─── Detail‐page gauge variant ─── */
+.detail-visual.prediction {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 175px;
+  background-color: rgb(48, 148, 255);
+  border-radius: 10px;
+  padding: 28px 16px 44px;
+}
 
+.detail-visual.prediction .bg,
+.detail-visual.prediction .fg {
+  stroke-width: 8;
+}
+.detail-visual.prediction .gauge {
+  width: 175px;
+  height: auto;
+}
+.detail-visual.prediction .bg,
+.detail-visual.prediction .fg {
+  stroke-width: 8;
+}
+.detail-visual.prediction .percent {
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+}
 
 /* One card per row on small screens */
 @media (max-width: 600px) {

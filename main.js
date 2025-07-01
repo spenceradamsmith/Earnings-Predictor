@@ -85,6 +85,34 @@ function formatNumber(value, decimals = 2) {
   return value.toFixed(decimals);
 }
 
+// helper to render the prediction gauge
+function renderPredictionGauge(pct, isDetail = false) {
+  return `
+    <div class="visual prediction ${isDetail ? 'detail-visual' : ''}">
+          <svg class="gauge" viewBox="0 0 100 50">
+            <path class="bg"
+              d="M10,50 A40,40 0 0,1 90,50"
+              fill="none"/>
+            <path class="fg"
+              d="M10,50 A40,40 0 0,1 90,50"
+              fill="none"/>
+          </svg>
+          <div class="percent">${(pct).toFixed(1)}%</div>
+              </div>
+  `;
+}
+
+// helper to render the countdown
+function renderCountdownDisplay(display, unit) {
+  return `
+    <div class="countdown">
+      <div class="days-number">${display}</div>
+      <div class="days-label">${unit}</div>
+      <div class="days-sub">until prediction</div>
+    </div>
+  `;
+}
+
 function renderStockDetail(stock) {
   const raw = stock.days_until;
   const daysLeft = (typeof raw === 'number' && !isNaN(raw)) ? raw - 7 : null;
@@ -95,6 +123,9 @@ function renderStockDetail(stock) {
   const rest = sentences.slice().join(' ');
   website = stock.website
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  const visualHtml = (typeof stock.raw_beat_pct === 'number')
+    ? renderPredictionGauge(stock.raw_beat_pct, true)
+    : renderCountdownDisplay(display, unit);
 
   return `
     <button class="back-btn">&larr; Back to all stocks</button>
@@ -114,11 +145,7 @@ function renderStockDetail(stock) {
           </div>
         </div>
       </div>
-      <div class="countdown">
-        <div class="days-number">${display}</div>
-        <div class="days-label">${unit}</div>
-        <div class="days-sub">until prediction</div>
-      </div>
+      ${visualHtml}
     </div>
 
     <div class="metrics-grid">
@@ -199,6 +226,14 @@ function showStockDetail(stock) {
   container.innerHTML = renderStockDetail(stock);
   document.querySelector('.content').classList.add('show-search');
   attachDetailListeners();
+  if (typeof stock.raw_beat_pct === 'number') {
+    const fg = container.querySelector('.gauge .fg');
+    const length = fg.getTotalLength();
+    fg.style.strokeDasharray  = length;
+    fg.style.strokeDashoffset = length * (1 - stock.raw_beat_pct / 100);
+    fg.classList.toggle('green', stock.raw_beat_pct >= 50);
+    fg.classList.toggle('red',   stock.raw_beat_pct <  50);
+  }
   window.history.replaceState(null, '', `#stock=${stock.ticker}`);
   window.localStorage.setItem('lastStock', stock.ticker);
   window.scrollTo({ top: 0, behavior: 'smooth' });
