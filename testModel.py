@@ -8,7 +8,7 @@ from catboost import CatBoostClassifier, Pool
 import re
 
 # Choose stock and load model
-ticker = "NKE"
+ticker = "AAPL"
 category_features = ["sector", "quarter", "day_of_week"]
 model = CatBoostClassifier()
 model.load_model("catboost_model.cbm")
@@ -16,12 +16,12 @@ model.load_model("catboost_model.cbm")
 # Get upcoming earnings date for the stock
 stock = yf.Ticker(ticker)
 info = stock.info
-company_name = info.get("shortName", ticker)
+company_name = info.get("longName") or info.get("shortName") or ticker
 website = info.get("website", None)
 description = info.get("longBusinessSummary", "")
 prefix = company_name.rstrip(".")
 sentences = re.split(r'(?<!Inc)(?<!LLC)(?<!Co)(?<!Corp)\. ', description)
-first_sentences = sentences[:4] # Adjust the number for the number of sentences
+first_sentences = sentences[:4]
 short_desc = ". ".join(sentence.strip() for sentence in first_sentences)
 if not short_desc.endswith("."):
     short_desc += "."
