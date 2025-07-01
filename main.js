@@ -123,6 +123,7 @@ function renderStockDetail(stock) {
   const rest = sentences.slice().join(' ');
   website = stock.website
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  nav.scrollTo({ left: 0, behavior: 'smooth' });
   const visualHtml = (typeof stock.raw_beat_pct === 'number')
     ? renderPredictionGauge(stock.raw_beat_pct, true)
     : renderCountdownDisplay(display, unit);
