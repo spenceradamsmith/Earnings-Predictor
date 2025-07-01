@@ -201,7 +201,7 @@ function attachDetailListeners() {
 
 async function fetchFullStockData(ticker) {
   const res  = await fetch(
-    `http://earnings-predictor-dev.us-east-2.elasticbeanstalk.com/predict?ticker=${encodeURIComponent(ticker)}`
+    `/predict?ticker=${encodeURIComponent(ticker)}`
   );
   const json = await res.json();
   return {
@@ -393,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // parallel-fetch all tickers
     const responses = await Promise.all(tickers.map(async ticker => {
       try {
-        const res  = await fetch(`http://earnings-predictor-dev.us-east-2.elasticbeanstalk.com/predict?ticker=${encodeURIComponent(ticker)}`);
+        const res  = await fetch(`/predict?ticker=${encodeURIComponent(ticker)}`);
         if (!res.ok) throw new Error(res.status);
         const json = await res.json();
 
