@@ -403,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let date = null;
 
-        // 1) If we have a future days_until, always use that
+        // Get rid of any old earnings dates
         if (json.days_until != null && !isNaN(json.days_until)) {
           date = new Date(now + json.days_until * MS_PER_DAY);
         } else if (json.earnings_date) {
@@ -412,11 +412,9 @@ document.addEventListener('DOMContentLoaded', () => {
             date = parsed;
           }
         }
-
-// 3) If that date has already passed, and we _don’t_ have a days_until, treat as “no date”
-if (date && date.getTime() < now && (json.days_until == null || isNaN(json.days_until))) {
-  date = null;
-}
+        if (date && date.getTime() < now && (json.days_until == null || isNaN(json.days_until))) {
+          date = null;
+        }
 
         // compute days until for countdown
         let daysUntil = null;
