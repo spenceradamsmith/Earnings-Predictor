@@ -242,20 +242,6 @@ function showStockDetail(stock) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-cardsGrid.addEventListener('click', async e => {
-  const card = e.target.closest('.card');
-  if (!card) return;
-  const ticker = card.dataset.ticker;
-  let _origFooterHTML = null;
-    if (_origFooterHTML === null) {
-      _origFooterHTML = footer.innerHTML;
-    }
-  footer.textContent = `Loading...`;
-  const stock = await fetchFullStockData(ticker);
-  showStockDetail(stock);
-  footer.innerHTML = _origFooterHTML;
-});
-
 const top20Tickers = [
   'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA',
   'NVDA', 'BRK-B', 'META', 'UNH', 'V',
@@ -350,6 +336,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedScroll = parseInt(localStorage.getItem('navScroll'), 10);
   cardsGrid.addEventListener('click', async e => {
     searchInput.value = '';
+    const card = e.target.closest('.card');
+    if (!card) {
+      return;
+    }
+    const ticker = card.dataset.ticker;
+    let _origFooterHTML = null;
+    if (_origFooterHTML === null) {
+       _origFooterHTML = footer.innerHTML;
+    }
+    footer.textContent = `Loading...`;
+    cardsGrid.innerHTML = '';
+    const stock = await fetchFullStockData(ticker);
+    showStockDetail(stock);
+    footer.innerHTML = _origFooterHTML;
   });
   if (!isNaN(savedScroll)) {
     nav.scrollLeft = savedScroll;
