@@ -1,5 +1,4 @@
 import os
-import re
 import yfinance as yf
 import pandas as pd
 import numpy as np
@@ -12,6 +11,10 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
+
+@app.route("/", methods=["GET"])
+def health_check():
+    return jsonify({"status": "ok"}), 200
 
 @app.route("/predict")
 def predict():
