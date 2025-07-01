@@ -28,7 +28,7 @@ def predict():
     info = stock.info or {}
 
     # Company name
-    company_name = info.get("shortName") or ticker
+    company_name = info.get("longName") or info.get("shortName") or ticker
 
     # Website and logo
     website = info.get("website")
