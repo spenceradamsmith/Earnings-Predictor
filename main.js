@@ -322,7 +322,12 @@ const categoryTickers = {
 document.addEventListener('DOMContentLoaded', () => {
   const nav = document.querySelector('.categories-nav');
   const allBtn = Array.from(nav.querySelectorAll('button')).find(b => b.textContent === 'All');
-   const stored = window.localStorage.getItem('lastStock');
+  const stored = window.localStorage.getItem('lastStock');
+  const footer = document.querySelector('.footer');
+  const defaultFooterHTML = footer.innerHTML;
+  function resetFooter() {
+    footer.innerHTML = defaultFooterHTML;
+  }
   if (stored) {
     nav.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
     allBtn && allBtn.classList.add('selected');
@@ -341,15 +346,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     const ticker = card.dataset.ticker;
-    let _origFooterHTML = null;
-    if (_origFooterHTML === null) {
-       _origFooterHTML = footer.innerHTML;
-    }
     footer.textContent = `Loading...`;
     cardsGrid.innerHTML = '';
     const stock = await fetchFullStockData(ticker);
     showStockDetail(stock);
-    footer.innerHTML = _origFooterHTML;
+    resetFooter();
   });
   if (!isNaN(savedScroll)) {
     nav.scrollLeft = savedScroll;
@@ -397,11 +398,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!tickers.length) {
       cardsGrid.innerHTML = `<div class="card"><div class="card-content">No tickers found for “${category}.”</div></div>`;
       return;
-    }
-    const footer = document.querySelector('.footer');
-    let _origFooterHTML = null;
-    if (_origFooterHTML === null) {
-      _origFooterHTML = footer.innerHTML;
     }
     footer.textContent = `Loading...`;
     // parallel-fetch all tickers
@@ -454,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return { ticker, name: ticker, logo: null, date: null, expected_eps: null, days_until: null, raw_beat_pct: null };
       }
     }));
-    footer.innerHTML = _origFooterHTML;
+    resetFooter();
 
     // filter out nulls, sort by proximity
     const items = responses
