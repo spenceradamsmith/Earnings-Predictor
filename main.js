@@ -264,7 +264,7 @@ const categoryTickers = {
     'VTR', 'EQR', 'SBAC', 'BEKE', 'INVH'
   ],
   'Communication Services': [
-    'GOOGL', 'META', 'NFLX', 'TMUS', 'DIS',
+    'GOOG', 'META', 'NFLX', 'TMUS', 'DIS',
     'T', 'VZ', 'SPOT', 'CMCSA', 'APP',
     'NTES', 'RBLX', 'CHTR', 'AMX', 'TTWO',
     'EA', 'TTD', 'CHT', 'TKO', 'LYV'
