@@ -56,10 +56,19 @@ html, body {
   padding-bottom: 0;
 }
 
+@font-face {
+  font-family: 'Header';
+  src: url('FuturisticText.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .header-top h1 {
   margin: 0;
-  font-size: clamp(20px, 4vw, 28px);
-  font-weight: 700;
+  font-family: 'Header', sans-serif;
+  font-size: clamp(12px, 3vw, 32px);
+  font-weight: 600;
+  letter-spacing: 2px;
   color: rgb(218, 218, 218);
 }
 
