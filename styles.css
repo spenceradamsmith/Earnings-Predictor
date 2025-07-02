@@ -768,6 +768,9 @@ main {
 
 /* One card per row on small screens */
 @media (max-width: 600px) {
+  .header-top {
+    align-items: center;
+  }
   .cards-grid {
     grid-template-columns: 1fr;
   }
