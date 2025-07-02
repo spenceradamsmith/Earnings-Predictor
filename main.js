@@ -203,71 +203,71 @@ const categoryTickers = {
     'JPM', 'WMT', 'LLY', 'V', 'ORCL',
     'TCEHY', 'NFLX', 'MA', 'XOM', 'COST',
   ],
-  'Technology': [  
-    ['NVDA', 'MSFT', 'AAPL', 'AVGO', 'TSM'],  
-    ['ORCL', 'SAP', 'PLTR', 'ASML', 'CSCO'],  
-    ['IBM', 'CRM', 'AMD', 'INTU', 'NOW'],  
-    ['UBER', 'TXN', 'ACN', 'QCOM', 'ADBE']  
-  ],  
-  'Healthcare': [  
-    ['LLY', 'JNJ', 'ABBV', 'NVO', 'UNH'],  
-    ['NVS', 'ABT', 'AZN', 'MRK', 'ISRG'],  
-    ['TMO', 'AMGN', 'BSX', 'SYK', 'DHR'],  
-    ['PFE', 'GILD', 'SNY', 'VRTX', 'MDT']  
-  ],  
-  'Financials': [  
-    ['BRK-B', 'JPM', 'V', 'MA', 'BAC'],  
-    ['WFC', 'MS', 'AXP', 'HSBC', 'GS'],  
-    ['BX', 'RY', 'HDB', 'SCHW', 'BLK'],  
-    ['SPGI', 'C', 'MUFG', 'PGR', 'TD']  
-  ],  
-  'Consumer Discretionary': [  
-    ['AMZN', 'TSLA', 'HD', 'BABA', 'TM'],  
-    ['MCD', 'BKNG', 'PDD', 'TJX', 'LOW'],  
-    ['MELI', 'NKE', 'SBUX', 'DASH', 'SE'],  
-    ['RACE', 'RCL', 'ABNB', 'CMG', 'ORLY']  
-  ],  
-  'Consumer Staples': [  
-    ['WMT', 'COST', 'PG', 'KO', 'PM'],  
-    ['PEP', 'UL', 'BUD', 'BTI', 'MO'],  
-    ['MDLZ', 'CL', 'MNST', 'DEO', 'TGT'],  
-    ['KR', 'KDP', 'KMB', 'CCEP', 'KVUE']  
-  ],  
-  'Energy': [  
-    ['XOM', 'CVX', 'SHEL', 'TTE', 'COP'],  
-    ['ENB', 'BP', 'PBR', 'CVX', 'WMB'],  
-    ['EQNR', 'EPD', 'EOG', 'CNQ', 'KMI'],  
-    ['ET', 'LNG', 'MPC', 'MPLX', 'OKE']  
-  ],  
-  'Industrials': [  
-    ['GE', 'RTX', 'CAT', 'BA', 'HON'],  
-    ['UNP', 'ETN', 'GEV', 'DE', 'LMT'],  
-    ['RELX', 'TT', 'WM', 'CTAS', 'TRI'],  
-    ['PH', 'UPS', 'TDG', 'MMM', 'GD']  
-  ],  
-  'Materials': [  
-    ['LIN', 'BHP', 'RIO', 'SHW', 'SCCO'],  
-    ['ECL', 'NEM', 'APD', 'FCX', 'CRH'],  
-    ['AEM', 'CTVA', 'VALE', 'WPM', 'B'],  
-    ['VMC', 'MLM', 'FNV', 'NUE', 'DD']  
-  ],  
-  'Utilities': [  
-    ['NEE', 'SO', 'CEG', 'DUK', 'NGG'],  
-    ['VST', 'AEP', 'SRE', 'D', 'EXC'],  
-    ['PEG', 'XEL', 'ED', 'ETR', 'WEC'],  
-    ['PCG', 'NRG', 'AWK', 'DTE', 'AEE']  
-  ],  
-  'Real Estate': [  
-    ['AMT', 'PLD', 'WELL', 'EQIX', 'SPG'],  
-    ['DLR', 'PSA', 'O', 'CCI', 'CBRE'],  
-    ['VICI', 'CSGP', 'EXR', 'IRM', 'AVB'],  
-    ['VTR', 'EQR', 'SBAC', 'BEKE', 'INVH']  
-  ],  
-  'Communication Services': [  
-    ['GOOGL', 'META', 'NFLX', 'TMUS', 'DIS'],  
-    ['T', 'VZ', 'SPOT', 'CMCSA', 'APP'],  
-    ['NTES', 'RBLX', 'CHTR', 'AMX', 'TTWO'],  
-    ['EA', 'TTD', 'CHT', 'TKO', 'LYV']  
+  'Technology': [
+    'NVDA', 'MSFT', 'AAPL', 'AVGO', 'TSM',
+    'ORCL', 'SAP', 'PLTR', 'ASML', 'CSCO',
+    'IBM', 'CRM', 'AMD', 'INTU', 'NOW',
+    'UBER', 'TXN', 'ACN', 'QCOM', 'ADBE'
+  ],
+  'Healthcare': [
+    'LLY', 'JNJ', 'ABBV', 'NVO', 'UNH',
+    'NVS', 'ABT', 'AZN', 'MRK', 'ISRG',
+    'TMO', 'AMGN', 'BSX', 'SYK', 'DHR',
+    'PFE', 'GILD', 'SNY', 'VRTX', 'MDT'
+  ],
+  'Financials': [
+    'BRK-B', 'JPM', 'V', 'MA', 'BAC',
+    'WFC', 'MS', 'AXP', 'HSBC', 'GS',
+    'BX', 'RY', 'HDB', 'SCHW', 'BLK',
+    'SPGI', 'C', 'MUFG', 'PGR', 'TD'
+  ],
+  'Consumer Discretionary': [
+    'AMZN', 'TSLA', 'HD', 'BABA', 'TM',
+    'MCD', 'BKNG', 'PDD', 'TJX', 'LOW',
+    'MELI', 'NKE', 'SBUX', 'DASH', 'SE',
+    'RACE', 'RCL', 'ABNB', 'CMG', 'ORLY'
+  ],
+  'Consumer Staples': [
+    'WMT', 'COST', 'PG', 'KO', 'PM',
+    'PEP', 'UL', 'BUD', 'BTI', 'MO',
+    'MDLZ', 'CL', 'MNST', 'DEO', 'TGT',
+    'KR', 'KDP', 'KMB', 'CCEP', 'KVUE'
+  ],
+  'Energy': [
+    'XOM', 'CVX', 'SHEL', 'TTE', 'COP',
+    'ENB', 'BP', 'PBR', 'CVX', 'WMB',
+    'EQNR', 'EPD', 'EOG', 'CNQ', 'KMI',
+    'ET', 'LNG', 'MPC', 'MPLX', 'OKE'
+  ],
+  'Industrials': [
+    'GE', 'RTX', 'CAT', 'BA', 'HON',
+    'UNP', 'ETN', 'GEV', 'DE', 'LMT',
+    'RELX', 'TT', 'WM', 'CTAS', 'TRI',
+    'PH', 'UPS', 'TDG', 'MMM', 'GD'
+  ],
+  'Materials': [
+    'LIN', 'BHP', 'RIO', 'SHW', 'SCCO',
+    'ECL', 'NEM', 'APD', 'FCX', 'CRH',
+    'AEM', 'CTVA', 'VALE', 'WPM', 'B',
+    'VMC', 'MLM', 'FNV', 'NUE', 'DD'
+  ],
+  'Utilities': [
+    'NEE', 'SO', 'CEG', 'DUK', 'NGG',
+    'VST', 'AEP', 'SRE', 'D', 'EXC',
+    'PEG', 'XEL', 'ED', 'ETR', 'WEC',
+    'PCG', 'NRG', 'AWK', 'DTE', 'AEE'
+  ],
+  'Real Estate': [
+    'AMT', 'PLD', 'WELL', 'EQIX', 'SPG',
+    'DLR', 'PSA', 'O', 'CCI', 'CBRE',
+    'VICI', 'CSGP', 'EXR', 'IRM', 'AVB',
+    'VTR', 'EQR', 'SBAC', 'BEKE', 'INVH'
+  ],
+  'Communication Services': [
+    'GOOGL', 'META', 'NFLX', 'TMUS', 'DIS',
+    'T', 'VZ', 'SPOT', 'CMCSA', 'APP',
+    'NTES', 'RBLX', 'CHTR', 'AMX', 'TTWO',
+    'EA', 'TTD', 'CHT', 'TKO', 'LYV'
   ]
 };
 
