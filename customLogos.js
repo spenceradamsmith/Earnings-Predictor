@@ -93,7 +93,7 @@ window.customLogos = {
   SE: 'https://companieslogo.com/img/orig/SE-5cdd77b1.png?t=1720244493',
   RACE: 'https://pngimg.com/uploads/ferrari/ferrari_PNG102798.png',
   RCL: 'https://companieslogo.com/img/orig/RCL-8028a7c6.png?t=1739415795',
-  ABNB: 'https://logos-world.net/wp-content/uploads/2020/07/Airbnb-Emblem.png',
+  ABNB: 'https://img.icons8.com/?size=512&id=103424&format=png',
   CMG: 'https://companieslogo.com/img/orig/CMG-0295f544.png?t=1720244491',
   ORLY: 'https://companieslogo.com/img/orig/ORLY-a3848b52.png?t=1720244493',
 
