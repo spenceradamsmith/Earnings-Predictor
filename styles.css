@@ -803,7 +803,7 @@ main {
     margin-top: 1rem;
   }
 }
-@media (device-width: 428px) { 
+@media (device-width: 500px) { 
   .header-top h1 {
     transform: translateY(-10px);
   }
