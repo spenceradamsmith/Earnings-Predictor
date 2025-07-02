@@ -332,7 +332,10 @@ document.addEventListener('DOMContentLoaded', () => {
     nav.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
     allBtn && allBtn.classList.add('selected');
     fetchFullStockData(stored)
-      .then(showStockDetail)
+      .then(stock => {
+        showStockDetail(stock);
+        resetFooter();
+      })
       .catch(console.error);
   }
   const cardsGrid = document.querySelector('.cards-grid');
@@ -587,9 +590,12 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // Auto-click “All” on load
-  const initial = nav.querySelector('button.selected') || nav.querySelector('button');
-  if (initial) initial.click();
+  if (!stored) {
+    const initial = nav.querySelector('button.selected') || nav.querySelector('button');
+    if (initial) {
+      initial.click();
+    }
+  }
 
   const header = document.querySelector('.header-top h1');
   const allButton = document.getElementById('all-button');
