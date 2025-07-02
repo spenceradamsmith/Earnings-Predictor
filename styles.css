@@ -805,6 +805,6 @@ main {
 }
 @media (max-width: 500px) { 
   .header-top h1 {
-    transform: translateY(-20px);
+    transform: translateY(-10px);
   }
 }
