@@ -805,9 +805,9 @@ main {
 }
 @media (max-width: 500px) { 
   .header-top h1 {
-    transform: translateY(-7px);
+    transform: translateY(-8px);
   }
   .search-box {
-    width: 200px;
+    width: 150px;
   }
 }
