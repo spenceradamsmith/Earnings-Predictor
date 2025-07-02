@@ -175,34 +175,8 @@ function renderStockDetail(stock) {
   `;
 }
 
-function attachDetailListeners() {
-  // Read-more toggle
-  document
-    .getElementById('toggle-desc')
-    .addEventListener('click', e => {
-      const more   = document.getElementById('more-text');
-      const hidden = more.style.display === 'none';
-      more.style.display  = hidden ? 'inline' : 'none';
-      e.target.textContent = hidden ? ' Show less' : '…more';
-    });
-
-  // Back button
-  document.querySelector('.back-btn').addEventListener('click', () => {
-    document.querySelector('.content').classList.remove('show-search');
-    const searchInput = document.querySelector('.search-box input');
-    const searchResults = document.querySelector('.search-results');
-    searchInput.value = '';
-    searchResults.innerHTML = '';
-    searchResults.style.display = 'none';
-    window.history.replaceState(null, '', window.location.pathname);
-    window.localStorage.removeItem('lastStock');
-  });
-}
-
 async function fetchFullStockData(ticker) {
-  const res  = await fetch(
-    `/predict?ticker=${encodeURIComponent(ticker)}`
-  );
+  const res = await fetch(`/predict?ticker=${encodeURIComponent(ticker)}`);
   const json = await res.json();
   return {
     ticker,
@@ -220,26 +194,6 @@ async function fetchFullStockData(ticker) {
     days_until:       json.days_until,
     raw_beat_pct:     json.raw_beat_pct
   };
-}
-
-function showStockDetail(stock) {
-  const container = document.getElementById('searchStock');
-  container.innerHTML = renderStockDetail(stock);
-  document.querySelector('.content').classList.add('show-search');
-  attachDetailListeners();
-  if (typeof stock.raw_beat_pct === 'number') {
-    const fg = container.querySelector('.gauge .fg');
-    const length = fg.getTotalLength();
-    const pctValue = stock.raw_beat_pct;
-    fg.style.strokeDasharray  = length;
-    fg.style.strokeDashoffset = length * (1 - stock.raw_beat_pct / 100);
-    fg.classList.toggle('red', pctValue < 40);
-    fg.classList.toggle('yellow', pctValue >= 40 && pctValue < 60);
-    fg.classList.toggle('green', pctValue >= 60);
-  }
-  window.history.replaceState(null, '', `#stock=${stock.ticker}`);
-  window.localStorage.setItem('lastStock', stock.ticker);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 const top20Tickers = [
@@ -337,6 +291,57 @@ document.addEventListener('DOMContentLoaded', () => {
         resetFooter();
       })
       .catch(console.error);
+  }
+  
+  function attachDetailListeners() {
+    // Read-more toggle
+    document.getElementById('toggle-desc').addEventListener('click', e => {
+      const more = document.getElementById('more-text');
+      const hidden = more.style.display === 'none';
+      more.style.display = hidden ? 'inline' : 'none';
+      e.target.textContent = hidden ? ' Show less' : '…more';
+    });
+
+    // Back button
+    document.querySelector('.back-btn').addEventListener('click', () => {
+      document.querySelector('.content').classList.remove('show-search');
+      goHome();
+      const searchInput = document.querySelector('.search-box input');
+      const searchResults = document.querySelector('.search-results');
+      searchInput.value = '';
+      searchResults.innerHTML = '';
+      searchResults.style.display = 'none';
+      window.history.replaceState(null, '', window.location.pathname);
+      window.localStorage.removeItem('lastStock');
+    });
+  }
+  function showStockDetail(stock) {
+    const container = document.getElementById('searchStock');
+    container.innerHTML = renderStockDetail(stock);
+    document.querySelector('.content').classList.add('show-search');
+    attachDetailListeners();
+    if (typeof stock.raw_beat_pct === 'number') {
+      const fg = container.querySelector('.gauge .fg');
+      const length = fg.getTotalLength();
+      const pctValue = stock.raw_beat_pct;
+      fg.style.strokeDasharray  = length;
+      fg.style.strokeDashoffset = length * (1 - stock.raw_beat_pct / 100);
+      fg.classList.toggle('red', pctValue < 40);
+      fg.classList.toggle('yellow', pctValue >= 40 && pctValue < 60);
+      fg.classList.toggle('green', pctValue >= 60);
+    }
+    window.history.replaceState(null, '', `#stock=${stock.ticker}`);
+    window.localStorage.setItem('lastStock', stock.ticker);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function goHome() {
+    footer.textContent = 'Loading…';
+    const category = localStorage.getItem('selectedCategory') || 'All';
+    await fetchAndDisplay(category);
+    document.querySelector('.content').classList.remove('show-search');
+    window.localStorage.removeItem('lastStock');
+    resetFooter();
   }
   const cardsGrid = document.querySelector('.cards-grid');
   const now = Date.now();
