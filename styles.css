@@ -49,7 +49,6 @@ html, body {
 
 .header-top {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
   line-height: 1;
@@ -775,9 +774,6 @@ main {
   }
   .header-top h1 {
     width: auto;
-  }
-  .header-top .search-box {
-    width: clamp(200px, 40%, 60vw);
   }
   .cards-grid {
     grid-template-columns: 1fr;
