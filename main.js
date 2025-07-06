@@ -42,7 +42,7 @@ function formatEarningsDate(value) {
   if (!(date instanceof Date) || isNaN(date)) {
     return 'TBD';
   }
-  const month = date.toLocaleString('en-US', { month: 'long' });
+  const month = date.toLocaleString('en-US', { month: 'short' });
   const day   = date.getDate();
   const year  = date.getFullYear();
   // Determine ordinal suffix
