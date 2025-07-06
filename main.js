@@ -42,7 +42,24 @@ function formatEarningsDate(value) {
   if (!(date instanceof Date) || isNaN(date)) {
     return 'TBD';
   }
-  const month = date.toLocaleString('en-US', { month: 'short' });
+  const monthIndex = date.getMonth();
+  const customMonthNames = {
+    0: 'Jan.',   // January
+    1: 'Feb.',   // February
+    2: 'Mar.',   // March
+    3: 'Apr.',   // April
+    4: 'May',   // May
+    5: 'Jun.',   // June
+    6: 'Jul.',   // July
+    7: 'Aug.',   // August
+    8: 'Sept.',   // September
+    9: 'Oct.',   // October
+    10: 'Nov.',  // November
+    11: 'Dec.'   // December
+  };
+  const month = customMonthNames.hasOwnProperty(monthIndex)
+    ? customMonthNames[monthIndex]
+    : date.toLocaleString('en-US', { month: 'long' });
   const day   = date.getDate();
   const year  = date.getFullYear();
   // Determine ordinal suffix
