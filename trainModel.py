@@ -19,7 +19,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 class_weights = {0: 3, 1: 1}
 
-# Create the CatBoost model with initial parameters
+# Create CatBoost model with initial parameters
 model = CatBoostClassifier(
     iterations = 300,
     learning_rate = 0.1,
@@ -35,7 +35,7 @@ model.set_params(class_weights={0: 3, 1: 1})
 
 # Create CatBoost Pool objects for training and testing
 train_pool = Pool(data = X_train, label = y_train, cat_features = category_features) 
-test_pool  = Pool(data = X_test,  label = y_test,  cat_features = category_features)
+test_pool = Pool(data = X_test,  label = y_test,  cat_features = category_features)
 model.fit(train_pool, eval_set = test_pool)
 
 # Save the model after training
