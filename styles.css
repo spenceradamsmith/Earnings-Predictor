@@ -805,10 +805,11 @@ main {
   }
 }
 @media (max-width: 500px) { 
-  .header-top h1 {
-    font-size: 13px;
-  }
   .search-box {
     width: 175px;
+    margin: 0;
+    margin-left: auto;
+    max-width: none;
+    align-items: end;
   }
 }
