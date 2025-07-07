@@ -804,8 +804,3 @@ main {
     margin-top: 1rem;
   }
 }
-@media (max-width: 500px) { 
-  .search-box {
-    width: 150px;
-  }
-}
