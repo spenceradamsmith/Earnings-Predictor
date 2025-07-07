@@ -805,8 +805,10 @@ main {
   }
 }
 @media (max-width: 500px) { 
+  .header-top h1 {
+    font-size: 13px;
+  }
   .search-box {
-    width: 155px;
-    align-items: end;
+    width: 175px;
   }
 }
