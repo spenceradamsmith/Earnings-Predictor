@@ -807,6 +807,6 @@ main {
 @media (max-width: 500px) { 
   .search-box {
     width: 150px;
-    padding-right: 0;
+    margin-right: 0;
   }
 }
